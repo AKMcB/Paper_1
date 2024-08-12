@@ -1,7 +1,7 @@
 
-###############
-## Libraries ##
-###############
+#############
+# Libraries #
+#############
 
 library(tidyverse)
 library(readxl)
@@ -11,9 +11,9 @@ library(fgsea)
 library(circlize)
 library(RColorBrewer)
 
-#####################
-## Expression file ##
-#####################
+###################
+# Expression file #
+###################
 
 raw <- as.data.frame(read_xlsx("hsc3_t47d_counts.xlsx"))
 
@@ -42,9 +42,9 @@ housekeeping <- c("GAPDH", "B2M", "ACTB", "TBP", "RP",
 hs <- subset(raw, (Gene %in% genes$HALLMARK_PI3K_AKT_MTOR_SIGNALING))
 hs$Gene <- NULL
 
-#############
-## Heatmap ##
-#############
+###########
+# Heatmap #
+###########
 
 # Compute row variances
 row_variances <- apply(hs, 1, var)
