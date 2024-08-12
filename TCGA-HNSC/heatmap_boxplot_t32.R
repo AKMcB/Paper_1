@@ -1,13 +1,12 @@
-###############
-## Libraries ##
-###############
+#############
+# Libraries #
+#############
 
 library(tidyverse)
 
-
-#####################
-## Expression data ##
-#####################
+###################
+# Expression data #
+###################
 
 expr <- read.csv2("raw data/TMM_TCGA_HNSC_counts_NoNormal_log2_filtered.csv", sep = ";", as.is = T,check.names = F)
 
@@ -26,9 +25,9 @@ dup <- as.data.frame(duplicated(expr$id))
 
 expr <- expr %>% select(c("id", "ENSG00000119401"))
 
-#########################
-## Heatmap column info ##
-#########################
+#######################
+# Heatmap column info #
+#######################
 
 ann2 <- read.csv2("Heatmap/trim32 exp/cluster_column_order_Heatmap__HNSC_locations_T32_exp_v2.csv", as.is = T, check.names = F)
 ann2 <- ann2[,-1]
@@ -78,18 +77,4 @@ dev.off()
 pdf("trim32_expr_heatmap_cluster.pdf", height = 10, width = 8)
 print(p)
 dev.off()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
