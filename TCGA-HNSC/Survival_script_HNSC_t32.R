@@ -1,8 +1,6 @@
-
-
-###############
-## Libraries ##
-###############
+#############
+# Libraries #
+#############
 
 library(survival)
 library(survminer)
@@ -13,11 +11,9 @@ library(grid)
 library(gridExtra)
 library(reade)
 
-##########################
-## Read expression data ##
-##########################
-
-
+########################
+# Read expression data #
+########################
 expr <- read.csv2("TMM conversion//TMM_TCGA_HNSC_counts_NoNormal_log2_filtered.csv", sep = ";", as.is = T, check.names = F)
 
 #check if there is any gene duplicates 
@@ -42,10 +38,9 @@ trims <- trims[!grepl("-06",trims$id),]
 
 dup <- as.data.frame(duplicated(trims$id))
 
-
-###################
-## Clinical info ##
-###################
+#################
+# Clinical info #
+#################
 
 info <- read.csv2("Clinical_info_HNSC.csv", sep = ";", as.is = T, check.names = F)
 head(info)
@@ -136,9 +131,9 @@ survival_fit_pfi<- survfit(formula = survival_pfi ~ trim_pfi$TRIM32_expression, 
 survival_fit_os<- survfit(formula = survival_os ~ trim_os$TRIM32_expression, data = trim_pfi)
 
 
-#########
-## DSS ##
-#########
+#######
+# DSS #
+#######
 
 dss <- ggsurvplot(fit= survival_fit_dss, 
                       pval = TRUE, 
@@ -167,9 +162,9 @@ pdf("Kaplan-Meier/trim32_hnsc_tcga_dss.pdf", width = 8, height = 7, onefile = F)
 print(dss)
 dev.off()
 
-#########
-## PFI ##
-#########
+#######
+# PFI #
+#######
 
 pfi <- ggsurvplot(fit= survival_fit_pfi, 
                   pval = TRUE, 
@@ -198,9 +193,9 @@ pdf("Kaplan-Meier/trim32_hnsc_tcga_pfi.pdf", width = 8, height = 7, onefile = F)
 print(pfi)
 dev.off()
 
-########
-## OS ##
-########
+######
+# OS #
+######
 
 os <- ggsurvplot(fit= survival_fit_os, 
                   pval = TRUE, 
