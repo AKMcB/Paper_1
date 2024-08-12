@@ -1,12 +1,18 @@
-library(tibble)
-library(dplyr)
+#############
+# Libraries #
+#############
+
 library(ggpubr)
 library(ggplot2)
 library(tidytext)
 library(Hmisc)
 library(data.table)
-#Start here when working with new genes----------------------------------------------------------------------
-setwd("C:/Users/abe186/UiT Office 365/O365-Bioinformatikk TRIM27 - General/pancanAtlasHub")
+library(tidyverse)
+
+########################
+# Read expression file #
+########################
+
 pancan <- as.data.frame(fread("EB++AdjustPANCAN_IlluminaHiSeq_RNASeqV2.geneExp.xena"))
 
 df <- subset(pancan, pancan$sample == "TRIM32")
