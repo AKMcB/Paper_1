@@ -1,11 +1,16 @@
+#############
+# Libraries #
+#############
 library(tidyverse)
 library(readxl)
 library(ComplexHeatmap)
 library(dendsort)
+library(circlize)
+library(RColorBrewer)
 
-#####################
-## Expression file ##
-#####################
+###################
+# Expression file #
+###################
 
 raw <- as.data.frame(read_xlsx("hsc3_t47d_counts.xlsx"))
 
@@ -35,9 +40,9 @@ housekeeping <- c("GAPDH", "B2M", "ACTB", "TBP", "RP",
 hs <- subset(raw, (Gene %in% housekeeping))
 hs$Gene <- NULL
 
-#############
-## Heatmap ##
-#############
+###########
+# Heatmap #
+###########
 
 h <- as.matrix(log2(1+hs))
 
@@ -58,9 +63,8 @@ row_dist <- as.dist(1-cor(t(h), method = "pearson"))
 row_hc <- hclust(row_dist, method = "complete")
 Rowv=dendsort(as.dendrogram(row_hc), isRevers=TRUE, type = "average") 
 
-library(dendsort)
-library(circlize)
-library(RColorBrewer)
+
+
 col_fun <- colorRamp2(quantile_breaks(h, n = 11), c("#1e90ff", "#0479f5", "#0467d2", "#0356af", "#02458c","#023369","#012246", "#130202", "#6b0002","#b20004","#ff0000"))
 
 pdf("Housekeeping_genes_hsc3_wt_vs_ko.pdf",  width=13,height=16)
