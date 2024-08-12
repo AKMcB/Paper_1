@@ -1,11 +1,16 @@
+#############
+# Libraries #
+#############
 library(tibble)
 library(dplyr)
 library(ggpubr)
 library(ggplot2)
 library(tidytext)
 library(data.table)
-setwd("C:/Users/abe186/UiT Office 365/O365-Bioinformatikk TRIM27 - General/Cancer cell lines cyclopedia/Raw Data")
-#Start here when working with new genes----------------------------------------------------------------------
+
+########################
+# Read expression file #
+########################
 t32 <- read.csv2("CCLE_TRIM32_exp_info_Cancer_Codes.csv", sep = ";", as.is = T, check.names = F)
 
 
