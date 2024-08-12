@@ -1,16 +1,18 @@
-#Import the libraries
+#############
+# Libraries #
+#############
+
 library(ComplexHeatmap)
 library(RColorBrewer)
 library(gplots)
 library(circlize)
 library(dendextend)
-library(dplyr)
 library(tidyverse)
 library(clValid)
 
-##########################
-## Read expression data ##
-##########################
+########################
+# Read expression data #
+########################
 
 #Import the data
 #The HNSC data is TMM normalized
@@ -29,12 +31,9 @@ expr <- expr[!grepl("-06",expr$id),]
 
 dup <- as.data.frame(duplicated(expr$id))
 
-
-
-###################
-## Clinical info ##
-###################
-#-------------------------------------------------------------------------------
+#################
+# Clinical info #
+#################
 
 ann <- read.csv2("raw data/Clinical _info_HNSC_V2_no_duplicates.csv", sep = ";",
                  as.is = T, check.names=F)
@@ -81,67 +80,40 @@ pattern_regex <- paste(patterns_pahrynx, collapse = "|")
 replacement <- "Pharynx, NOS"
 
 
-# Use gsub() to replace multiple patterns with the replacement string
 ann$site_of_resection_or_biopsy <- gsub(pattern_regex, replacement, ann$site_of_resection_or_biopsy)
 string_counts <- table(ann$site_of_resection_or_biopsy)
 print(string_counts)
 
 patterns_tongue <- c("Ventral surface of tongue, NOS","Border of tongue")
-
-# Define the patterns you want to replace as a regular expression
-
 pattern_regex <- paste(patterns_tongue, collapse = "|")
-
-# Define the replacement string
 replacement <- "Tongue, NOS"
 
-
-# Use gsub() to replace multiple patterns with the replacement string
 ann$site_of_resection_or_biopsy <- gsub(pattern_regex, replacement, ann$site_of_resection_or_biopsy)
 string_counts <- table(ann$site_of_resection_or_biopsy)
 print(string_counts)
 
 patterns_gum <- c("Lower gum","Upper gum", "Hard palate", "Palate, NOS")
-
-# Define the patterns you want to replace as a regular expression
-
 pattern_regex <- paste(patterns_gum, collapse = "|")
-
-# Define the replacement string
 replacement <- "Gum, NOS"
 
 
-# Use gsub() to replace multiple patterns with the replacement string
 ann$site_of_resection_or_biopsy <- gsub(pattern_regex, replacement, ann$site_of_resection_or_biopsy)
 string_counts <- table(ann$site_of_resection_or_biopsy)
 print(string_counts)
 
 patterns_floor <- c("Anterior floor of mouth")
-
-# Define the patterns you want to replace as a regular expression
-
 pattern_regex <- paste(patterns_floor, collapse = "|")
-
-# Define the replacement string
 replacement <- "Floor of mouth, NOS"
 
 
-# Use gsub() to replace multiple patterns with the replacement string
 ann$site_of_resection_or_biopsy <- gsub(pattern_regex, replacement, ann$site_of_resection_or_biopsy)
 string_counts <- table(ann$site_of_resection_or_biopsy)
 print(string_counts)
 
 patterns_lar <- c("Supraglottis")
-
-# Define the patterns you want to replace as a regular expression
-
 pattern_regex <- paste(patterns_lar, collapse = "|")
-
-# Define the replacement string
 replacement <- "Larynx, NOS"
 
-
-# Use gsub() to replace multiple patterns with the replacement string
 ann$site_of_resection_or_biopsy <- gsub(pattern_regex, replacement, ann$site_of_resection_or_biopsy)
 string_counts <- table(ann$site_of_resection_or_biopsy)
 print(string_counts)
@@ -183,15 +155,14 @@ expr <- t(scale(t(expr)))
 expr <- as.data.frame(expr)
 
 
-#############
-## Heatmap ##
-#############
+###########
+# Heatmap #
+###########
 
 #Complexheatmap requires a matrix
 #The genes should be in the rownames!!
 
 #Patients has to be in rownames
-
 internal <- clValid::clValid(t(expr), method = "complete", metric = "correlation", clMethods = "hierarchical", nClust = 2:10, validation = "internal")
 plot(internal, legend = FALSE)
 
@@ -344,4 +315,3 @@ for (i in 1:length(row_order(ht))){   if (i == 1) {
 out
 
 write.csv2(out, file = "cluster_rows_order_Heatmap__HNSC_locations_T32_exp_v2.csv")
-
