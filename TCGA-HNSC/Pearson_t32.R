@@ -1,14 +1,13 @@
-###############
-## Libraries ##
-###############
+#############
+# Libraries #
+#############
 
 library(tidyverse)
 library(ggpubr)
 
-#####################
-## Expression data ##
-#####################
-
+###################
+# Expression data #
+###################
 
 expr <- read.csv2("raw data/TMM_TCGA_HNSC_counts_NoNormal_log2_filtered.csv", sep = ";", as.is = T, check.names = F)
 rownames(expr) <- expr[,1]
@@ -23,10 +22,9 @@ expr <- expr[!grepl("-06",expr$id),]
 
 dup <- as.data.frame(duplicated(expr$id))
 
-
-#################
-## Subset gene ##
-#################
+###############
+# Subset gene #
+###############
 
 #TRIM32 = ENSG00000119401
 #MAGED1 = ENSG00000179222
@@ -88,37 +86,3 @@ dev.off()
 pdf("maged1_vs_trim32_pearson.pdf", height = 10, width = 8)
 print(p2)
 dev.off()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
