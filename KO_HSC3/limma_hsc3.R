@@ -1,3 +1,7 @@
+#############
+# Libraries #
+#############
+
 library(edgeR)
 library(data.table)
 library(tidyverse)
@@ -7,9 +11,9 @@ library(biomaRt)
 library(Homo.sapiens)
 library(EnhancedVolcano)
 
-#####################
-## Expression file ##
-#####################
+###################
+# Expression file #
+###################
 
 expr <- as.data.frame(fread("hsc_wt_ko_counts.csv"))
 expr <- expr[,-c(2:4)]
@@ -20,9 +24,9 @@ expr <- column_to_rownames(expr, "Name")
 colnames(expr) <- c("HSC3_KO_1", "HSC3_KO_3", "HSC3_KO_6", "HSC3_WT_1", 
                     "HSC3_WT_2", "HSC3_WT_3") 
 
-##############################
-## Create group information ## 
-##############################
+############################
+# Create group information # 
+############################
 
 meta <- as.data.frame(fread("metadata_hsc3.csv"))
 meta <- meta[,-1]
@@ -47,9 +51,11 @@ treatment <- as.factor(meta$treatment)
 
 test_treat <- as.factor(test_meta$treatment)
 lane <- as.factor(test_meta$lane)
-###########
-## LIMMA ##
-###########
+
+#########
+# LIMMA #
+#########
+
 test <- expr[,-3]
 
 #Create DGEList object
@@ -124,9 +130,6 @@ top.table <- topTable(efit, sort.by = "P", n = Inf, coef = 1)
 #fwrite(top.table, "limma_trim32_wt_vs_ko.csv")
 
 
-volcano <- top.table 
-volcano$log10 <- 
-
 v <- EnhancedVolcano(top.table,
                      lab = rownames(top.table),
                      labSize = 3.0,
@@ -139,5 +142,4 @@ v <- EnhancedVolcano(top.table,
                      pCutoff = 0.05,
                      FCcutoff = 0.5,
                      colAlpha = 0.5)
--log10(top.table$adj.P.Val)
 
