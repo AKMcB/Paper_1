@@ -1,4 +1,7 @@
-library(dplyr)
+#############
+# Libraries #
+#############
+
 library(ggpubr)
 library(limma)
 library(magrittr)
@@ -7,9 +10,10 @@ library(readxl)
 library(pheatmap)
 library(data.table)
 library(tidyverse)
-################
-## Count file ##
-################
+
+##############
+# Count file #
+##############
 
 expr <- as.data.frame(fread("hsc_wt_ko_counts.csv"))
 expr <- expr[,-c(2,3)]
@@ -36,9 +40,9 @@ colnames(expr) <- c("HSC3_KO_1", "HSC3_KO_3", "HSC3_KO_6", "HSC3_WT_1",
                     "HSC3_WT_2", "HSC3_WT_3", "HSC3_CCLE")
 
 
-###############
-## Meta data ##
-###############
+#############
+# Meta data #
+#############
 
 meta <- as.data.frame(fread("metadata_hsc3.csv"))
 meta <- meta[,-1]
@@ -62,9 +66,9 @@ all(rownames(meta) == colnames(expr))
 
 treatment <- as.factor(meta$treatment)
 
-##########################
-## Correlation analysis ##
-##########################
+########################
+# Correlation analysis #
+########################
 
 d0 <- DGEList(expr, group = treatment) #Converting to DGE list for edgeR
 d0$genes <- data.frame(Symbol=rownames(d0))
@@ -96,7 +100,6 @@ draw(ht, padding = unit(c(2, 2, 2, 2), "mm"))
 dev.off()
 
 
-library(tidyverse)
 dput(names(df))
 dput(names(cor_matrix))
 # Choose two samples to compare others to, e.g., Sample1 and Sample2
@@ -115,10 +118,6 @@ plot_data <- data.frame(
   Average_Correlation_Control = average_cor_control
 )
 plot_data$Sample <- rownames(plot_data)
-
-#For t47d data
-plot_data$Condition <- c("T47D_KO_15", "T47D_KO_21", "T47D_KO_29", "T47D_KO_33",
-                         "T47D_WT_1","T47D_WT_2", "T47D_WT_3")
 
 #For hsc3 data
 plot_data$Condition <- c("HSC3_KO_1", "HSC3_KO_3", "HSC3_KO_6", "HSC3_WT_1", 
