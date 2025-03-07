@@ -10,7 +10,7 @@
 
 ## CCLE
 - **CCLE_boxplots_all_lines.R**
-    - This script explore the CCLE data and the expression of a specific gene, and all cell lines are included 
+    - This script explore the CCLE data and the expression of a specific gene, and all cell lines are included. 
 
 ## PANCAN 
 - **PanCan_Exp_boxplot.R** 
@@ -50,4 +50,11 @@
     - This script creates metacells of the single cells based on KNN.
  
 ## noroc 
-
+- **lmfit_noroc.R**
+    - This script fits a linear regression model of the NOROC data to calculate differentially expressed proteins. Includes GSEA.
+- **heatmap.R**
+    - Creates a heatmap from the NOROC data.
+- **boxplot_heatmap_clusters.R**
+    - This scripts generates boxplots showing the expression of a specific protein in the heatmap clusters generated form the heatmap.R script.
+- **Correlation_one gene to others.R**
+    - This script performs a Pearson correlation of one specfic protein against all the other proteins in the selected dataset. 
