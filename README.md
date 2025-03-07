@@ -5,7 +5,8 @@
 - **PANCAN**: Scripts for the data from the Pan Cancer Atlas project 
 - **TCGA-HNSC**: Scripts for the data from the The Cancer Genome Atlas program 
 - **KO-HSC3**: Scripts for  the data from the KO HSC3 cells 
-- **scRNA**: Scripts for the data from the scRNA-Sequencing data 
+- **scRNA**: Scripts for the data from the scRNA-Sequencing data
+- **noroc**: Scripts for the data from the NOROC study
 
 ## CCLE
 - **CCLE_boxplots_all_lines.R**
@@ -19,7 +20,16 @@
 - **Survival_script_HNSC_t32.R** 
    - This script explores the different survival parameters such as overall survival, disease-specific survival, and progression free survival in TCGA-HNSC, based on the expression values of a specific gene. 
 - **Pearson_t32.R** 
-    - This script caluclates the pearson correlation between two genes in the TCGA-HNSC data. 
+    - This script caluclates the pearson correlation between two genes in the TCGA-HNSC data.
+- **heatmap_locations_t32.R**
+    - This script generates a heatmap based on the scaled expression of TCGA-HNSC patients. Include annotations such as HNSC locations and subtype.
+ 
+- **heatmap_boxplot_t32**
+    - This scripts generates boxplots showing the expression of a specific protein in the heatmap clusters generated form the heatmap_locations_t32.R script.
+- **limma_hnsc.R**
+    - This scripts performs limma analysis and GSEA on the TCGA-HNSC data.
+- ** TRIM32_exp_Normal_VS_Tumor_HNSC.R**
+    - Generated a boxplots hsowing the difference of expression of a specific gene between normal and tumor samples.
 
 ## KO-HSC3 
 - **limma_hsc3.R** 
@@ -38,3 +48,6 @@
     - This subset the annotated data for epithelial cells. 
 - **metacells_cd45n.R**
     - This script creates metacells of the single cells based on KNN.
+ 
+## noroc 
+
