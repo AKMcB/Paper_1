@@ -1,7 +1,3 @@
-#############
-# Libraries #
-#############
-
 library(edgeR)
 library(data.table)
 library(tidyverse)
@@ -9,7 +5,6 @@ library(ggpubr)
 library(Glimma)
 library(EnhancedVolcano)
 library(fgsea)
-
 #####################
 ## Expression file ##
 #####################
@@ -118,7 +113,7 @@ v <- voom(d0, design, plot=TRUE)
 vfit <- lmFit(v, design)
 
 
-contr <- makeContrasts(WT - KO, levels = colnames(coef(vfit)))
+contr <- makeContrasts(KO - WT, levels = colnames(coef(vfit)))
 contr
 
 
@@ -128,15 +123,16 @@ plotSA(efit, main="Final model: Mean-variance trend")
 summary(decideTests(efit))
 
 top.table <- topTable(efit, sort.by = "P", n = Inf, coef = 1, adjust.method = "BH")
-fwrite(top.table, "limma_results/limma_trim32_WT_1_3_KO_3_6.csv", row.names = TRUE)
+fwrite(top.table, "limma_results/2025_03_05_limma_trim32_WT_1_3_KO_3_6.csv", row.names = TRUE)
 
+test <- subset(top.table, rownames(top.table) %in% "TRIM32")
 
 v <- EnhancedVolcano(top.table,
                        lab = rownames(top.table),
                        labSize = 6.0,
                        labCol = 'black',
                        labFace = 'bold',
-                       title = "WT vs KO TRIM32",
+                       title = "KO vs WT TRIM32",
                        x = 'logFC',
                        y = 'adj.P.Val',
                        pCutoff = 0.05,
@@ -144,11 +140,11 @@ v <- EnhancedVolcano(top.table,
                      ylim = c(0,4.5))
 v
 
-png("figures/volcano/volcanoplot_trim32_WT_1_3_KO_3_6.png", res = 200, height = 1800, width = 1500)
+png("figures/volcano/volcanoplot_trim32_WT_1_3_KO_3_6_v2.png", res = 200, height = 1800, width = 1500)
 print(v)
 dev.off()
 
-pdf("figures/volcano/volvanoplot_trim32_WT_1_3_KO_3_6.pdf", height = 8, width = 8)
+pdf("figures/volcano/volvanoplot_trim32_WT_1_3_KO_3_6_v2.pdf", height = 8, width = 8)
 print(v)
 dev.off()
 
@@ -157,19 +153,22 @@ dev.off()
 ##########
 #indegree_rank <- setNames(object=top.table[,"t"], rownames(top.table))
 
-top.table$genes <- rownames(top.table)
+top.table <- fread("limma_trim32_WT_1_3_KO_3_6_v2.csv")
+
+
+#top.table$V1 <- rownames(top.table)
 
 indegree_rank <- top.table %>%
   mutate(signed_rank_stats = sign(logFC) * -log10(P.Value)) %>%
   arrange(desc(signed_rank_stats))
 
-rownames(indegree_rank) <- indegree_rank$genes
+rownames(indegree_rank) <- indegree_rank$V1
 
 gene_list<- indegree_rank$signed_rank_stats
 names(gene_list)<- rownames(indegree_rank)
 
 ## Run fgsea
-pathways <- gmtPathways("gene_lists/h.all.v2023.2.Hs.symbols.gmt")
+pathways <- gmtPathways("gene_lists/c5.go.cc.v2024.1.Hs.symbols.gmt")
 set.seed(123)
 fgseaRes <- fgsea(pathways, gene_list, minSize=15, maxSize=500, nperm=1000)
 head(fgseaRes)
@@ -183,12 +182,13 @@ sig$pathway[sig$NES < 0][1:10]
 
 #fwrite(sig, "gsea_gobp_highvslow_t45_subtype_corr_arranged.csv", row.names = TRUE)
 
+
 dat <- data.frame(fgseaRes)
 # Settings
 fdrcut <- 0.05 # FDR cut-off to use as output for significant signatures
 dencol_neg <- "blue" # bubble plot color for negative ES KO
 dencol_pos <- "red" # bubble plot color for positive ES WT
-signnamelength <- 8 # set to remove prefix from signature names (2 for "GO", 4 for "KEGG", 8 for "REACTOME")
+signnamelength <- 3 # set to remove prefix from signature names (2 for "GO", 4 for "KEGG", 8 for "REACTOME")
 asp <- 3 # aspect ratio of bubble plot
 charcut <- 100 # cut signature name in heatmap to this nr of characters
 
@@ -203,10 +203,20 @@ for (j in 1:length(a)){
 } # cut signature names that have more characters than charcut, and add "..."
 a <- gsub("_", " ", a)
 dat$NAME <- a
+
+# Determine top 10 positive and negative NES signatures
+top_pos <- dat[dat$NES > 0, ]
+top_pos <- top_pos[order(-top_pos$NES), ][1:10, ]  # Order by NES descending and take top 10
+top_neg <- dat[dat$NES < 0, ]
+top_neg <- top_neg[order(top_neg$NES), ][1:10, ]  # Order by NES ascending and take top 10
+# Combine the top positive and negative NES signatures
+dat2 <- rbind(top_pos, top_neg)
+dat2$signature <- factor(dat2$NAME, levels = rev(dat2$NAME))
+
 # Determine what signatures to plot (based on FDR cut)
-dat2 <- dat[dat[,"padj"]<fdrcut,]
+dat2 <- dat2[dat2[,"padj"]<fdrcut,]
 dat2 <- dat2[order(dat2[,"padj"]),] 
-dat2$signature <- factor(dat2$NAME, rev(as.character(dat2$NAME)))
+dat2$signature <- factor(dat2$NAME, (as.character(dat2$NAME)))
 # Determine what labels to color
 sign_neg <- which(dat2[,"NES"]<0)
 sign_pos <- which(dat2[,"NES"]>0)
@@ -217,7 +227,7 @@ signcol[sign_pos] <- "red" # text color of positive signatures
 signcol <- rev(signcol) # need to revert vector of colors, 
 #because ggplot starts plotting these from below
 
-library(ggplot2)
+
 # Plot bubble plot
 g<-ggplot(dat2, aes(x=padj,y=signature,size=size))+
   geom_point(aes(fill=NES), shape=21)+
@@ -226,17 +236,17 @@ g<-ggplot(dat2, aes(x=padj,y=signature,size=size))+
   scale_size_area(max_size=10,guide="legend")+
   scale_fill_gradient2(low=dencol_neg, high=dencol_pos) + 
   scale_color_identity(labels = c("blue" = "sign_neg", "red" = "sign_pos"), guide = "legend")+
-  ggtitle("Hallmark")+ 
+  ggtitle("GO CC: KO vs WT TRIM32")+ 
   theme(axis.text.y = element_text(colour=signcol),
         plot.title = element_text(hjust = 0.5, face ="bold"))+
   theme(aspect.ratio=asp, axis.title.y=element_blank()) # test aspect.ratio
 
 g
 
-png("figures/hallmark_gsea_trim32_WT_1_3_KO_3_6.png", res = 200, height = 1800, width = 1500)
+png("figures/go_enrichemnt/go_cc_gsea_trim32_WT_1_3_KO_3_6_2025_02_28.png", res = 200, height = 1800, width = 1500)
 print(g)
 dev.off()
 
-pdf("figures/hallmark_trim32_WT_1_3_KO_3_6.pdf", height = 10, width = 8)
+pdf("figures/go_enrichemnt/go_cc_gsea_trim32_WT_1_3_KO_3_6_2025_02_28.pdf", height = 10, width = 8)
 print(g)
 dev.off()
