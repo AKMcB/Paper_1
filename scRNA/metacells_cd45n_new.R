@@ -1,3 +1,7 @@
+#############
+# Libraries #
+#############
+
 library(dplyr)
 library(Seurat)
 library(patchwork)
@@ -7,11 +11,13 @@ library(hdWGCNA)
 library(WGCNA)
 set.seed(1234)
 
-#read RDS object 
+###################
+# Read RDS object # 
+###################
+
 combined <- readRDS("annotated_all_samples_cd45n_batch_corr_epithelial_cells.RDS")
 
-
-#Functions
+#Functions from https://divingintogeneticsandgenomics.com/post/how-to-do-gene-correlation-for-single-cell-rnaseq-data-part-1/ 
 matrix_to_expression_df<- function(x, obj){
   df<- x %>%
     as.matrix() %>% 
@@ -23,7 +29,6 @@ matrix_to_expression_df<- function(x, obj){
                 tibble::rownames_to_column(var = "cell"))
   return(df)
 }
-
 
 get_expression_data<- function(obj, assay = "RNA", slot = "data", 
                                genes = NULL, cells = NULL){
@@ -43,7 +48,9 @@ get_expression_data<- function(obj, assay = "RNA", slot = "data",
   return(df)
 }
 
-#Construct metacells
+#######################
+# Construct metacells #
+#######################
 #Create a slow for the results be saved in
 combined <- SetupForWGCNA(
   combined,
@@ -51,7 +58,6 @@ combined <- SetupForWGCNA(
   fraction = 0.05, # fraction of cells that a gene needs to be expressed in order to be included
   wgcna_name = "correlation" # the name of the hdWGCNA experiment
 )
-
 
 # construct metacells in each group.
 combined <- MetacellsByGroups(
@@ -96,7 +102,10 @@ p2 <- VlnPlot(object = combined_metacell, features = "harmony_1",
               group.by = "sample_ID",  pt.size = .1)
 p1+p2
 
-#cluster cells 
+#################
+# Cluster cells #
+#################
+
 combined_metacell <- combined_metacell %>% 
   FindNeighbors(reduction = "harmony") %>% 
   FindClusters(resolution = 0.5)
@@ -220,8 +229,6 @@ p1 <- ggplot(expression_data, aes(x= TRIM32, y = MYC)) +
   facet_wrap(~pan_cancer_cluster) +
   ggpubr::stat_cor(method = "pearson")+ 
   theme_classic()
-
-
 
 p2 <- ggplot(get_expression_data(combined_metacell, genes = genes), 
        aes(x= TRIM32, y = MYC)) + 
