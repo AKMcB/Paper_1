@@ -1,13 +1,13 @@
-###############
-## Libraries ##
-###############
+#############
+# Libraries #
+#############
 
 library(tidyverse)
 library(ggpubr)
 
-#####################
-## Expression data ##
-#####################
+###################
+# Expression data #
+###################
 
 expr <- read.csv2("raw data/TMM_TCGA_HNSC_counts_NoNormal_log2_filtered_hgnc.csv", sep = ";", as.is = T,check.names = F)
 expr <- expr[,-c(1,3)]
@@ -32,9 +32,9 @@ dup <- as.data.frame(duplicated(expr$id))
 
 expr <- expr %>% select(c("id", "TRIM32", "MYC"))
 
-#########################
-## Heatmap column info ##
-#########################
+#######################
+# Heatmap column info #
+#######################
 
 ann2 <- read.csv2("Heatmap/cluster_column_order_Heatmap__myc_trim32_tcga_location_subtype_3_cluster_2025_02_27.csv", as.is = T, check.names = F)
 ann2 <- ann2[,-1]
@@ -47,15 +47,11 @@ merged$Cluster<- factor(merged$Cluster,
                         levels= c("cluster1", "cluster2", "cluster3"), 
                         labels = c("Cluster 1", "Cluster 2", "Cluster 3"))
 
-
-
-
 my_comparisons <- list( c("Cluster 1", "Cluster 2"),
                         c("Cluster 1", "Cluster 3"),
                         c("Cluster 2", "Cluster 3")) 
 symnum.args <- list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), 
                     symbols = c("****", "***", "**", "*", "ns"))
-
 
 merged_long <- pivot_longer(merged, cols = c(TRIM32, MYC), 
                           names_to = "gene", values_to = "expression")
@@ -87,18 +83,3 @@ dev.off()
 pdf("heatmap/trim32_expr_3_cluster_2025_02_28.pdf", height = 10, width = 8)
 print(p)
 dev.off()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
