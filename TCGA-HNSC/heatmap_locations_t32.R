@@ -212,21 +212,6 @@ ha <- HeatmapAnnotation("Location"= ann$site_of_resection_or_biopsy,
                         show_legend = T,
                         annotation_legend_param = list(title_gp = gpar(fontsize=12, fontface="bold"), labels_gp=gpar(fontsize=12)))
 
-
-hr <- rowAnnotation("Up/Down"=annotation2$`Up/Down regulated in cell lines`,
-                    "Gene Cluster - Cell Lines" = annotation2$`Gene cluster cell lines`,
-                    col=list("Gene Cluster - Cell Lines"=c("Cluster A"="cadetblue2",
-                                                           "Cluster B"="burlywood2",
-                                                           "Cluster C"="chocolate2",
-                                                           "#N/A" = "#CCCCCC"),
-                             "Up/Down"=c("Down" = "#1e90ff",
-                                         "Up" = "#ff0000")),
-                    simple_anno_size = unit(0.30, "cm"),
-                    border = T,
-                    annotation_name_gp= gpar(fontsize = 8.5,fontface="bold"),
-                    show_legend = T,
-                    annotation_legend_param = list(title_gp = gpar(fontsize=10, fontface="bold"), labels_gp=gpar(fontsize=8)))
-
 #Time to make the heatmap. Put it in an object (ht) for further analysis -> finding the patient and gene orders
 #Play around a bit with the different parameters of the heatmap. If it has more information, change the height and width.
 
@@ -267,7 +252,6 @@ ht <- draw(ht)
 
 setwd("C:/Users/abe186/UiT Office 365/O365-Phd Anne - General/TCGA-Head and neck/Heatmap")
 
-
 library(ggpubr)
 ggexport(ht, filename = "myc_trim32_tcga_location_subtype_3_cluster_2025_02_27.pdf", height = 8, width = 12)
 ggexport(ht, filename = "myc_trim32_tcga_location_subtype_3_cluster_2025_02_27.png", res=200, height =1500, width = 2200)
@@ -285,7 +269,6 @@ out
 
 write.csv2(out, "cluster_column_order_Heatmap__myc_trim32_tcga_location_subtype_3_cluster_2025_02_27.csv")
 
-
 #For getting the gene orders
 for (i in 1:length(row_order(ht))){   if (i == 1) {
   clu <- t(t(row.names(expr[row_order(ht)[[i]],])))
@@ -298,12 +281,3 @@ for (i in 1:length(row_order(ht))){   if (i == 1) {
 out
 
 write.csv2(out, file = "cluster_rows_order_Heatmap_myc_trim32_tcga_location_subtype_3_cluster_2025_02_27.csv")
-
-
-#You can also create an interactive heatmap
-if (!requireNamespace("BiocManager", quietly=TRUE))
-  install.packages("BiocManager")
-BiocManager::install("InteractiveComplexHeatmap")
-library(InteractiveComplexHeatmap)
-
-htShiny(ht)
