@@ -22,67 +22,45 @@ expr <- expr[!grepl("-06",expr$id),]
 
 dup <- as.data.frame(duplicated(expr$id))
 
+info <- read.csv2("raw data/Clinical_info_HNSC.csv", sep = ";", as.is = T, check.names = F)
+head(info)
+
 ###############
 # Subset gene #
 ###############
 
 #TRIM32 = ENSG00000119401
-#MAGED1 = ENSG00000179222
+#MYC =  ENSG00000136997
 
-genes <- expr %>% select(c("id", "ENSG00000119401","ENSG00000179222"))
+genes <- expr %>% select(c("id", "ENSG00000119401","ENSG00000136997"))
 
-colnames(genes)[c(2,3)] <- c("TRIM32", "MAGED1")
+colnames(genes)[c(2,3)] <- c("TRIM32", "MYC")
+
+merged <- merge(genes, info, by.x = "id", by.y = "Patient ID")
 
 
-p1 <- ggscatter(genes, x = "TRIM32", y = "MAGED1",
-                     title = "TRIM32 vs MAGED1",
-                     color = "black", shape = 21, size = 1.5,fill="#D73027",alpha=0.4, # Points color, shape and size
-                     add = "reg.line",  # Add regressin line
-                     add.params = list(color = "#D73027", fill = "#D73027"), # Customize reg. line
-                     conf.int = TRUE, # Add confidence interval
-                     cor.coef = TRUE,
-                     cor.coef.size = 5,# Add correlation coefficient. see ?stat_cor
-                     cor.coeff.args = list(method = "pearson", label.sep = "\n"),
-                     xlab = "TRIM32", ylab = "MAGED1")+
-      theme(legend.position = "bottom",
-      plot.title = element_text(hjust = 0.5, face ="italic"), #Italic if it is a gene. 
-      axis.text.x = element_text(size=10), axis.ticks.x=element_blank(), 
-      axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 11),
-      axis.text.y = element_text(size = 10))
+p1 <- ggscatter(merged, x = "TRIM32", y = "MYC",
+                title = " TRIM32 vs MYC (n = 495)",
+                color = "black", shape = 21, size = 2,fill="red",alpha=0.4, # Points color, shape and size
+                add = "reg.line",  # Add regressin line
+                add.params = list(color = "#D73027", fill = "#D73027"), # Customize reg. line
+                conf.int = TRUE, # Add confidence interval
+                cor.coef = TRUE,
+                cor.coef.size = 5,# Add correlation coefficient. see ?stat_cor
+                cor.coeff.args = list(method = "pearson", label.sep = "\n"),
+                xlab = "TRIM32", ylab = "MYC")+ 
+  theme(legend.position = "bottom",
+        plot.title = element_text(hjust = 0.5, face ="italic"), #Italic if it is a gene. 
+        axis.text.x = element_text(size=18), axis.ticks.x=element_blank(), 
+        axis.title.x = element_text(size = 18), axis.title.y = element_text(size = 18),
+        axis.text.y = element_text(size = 18))
 
 p1
 
-
-p2 <- ggscatter(genes, x = "MAGED1", y = "TRIM32",
-          title = "TRIM32 vs MAGED1",
-          color = "black", shape = 21, size = 1.5,fill="#D73027",alpha=0.4, # Points color, shape and size
-          add = "reg.line",  # Add regressin line
-          add.params = list(color = "#D73027", fill = "#D73027"), # Customize reg. line
-          conf.int = TRUE, # Add confidence interval
-          cor.coef = TRUE,
-          cor.coef.size = 5,# Add correlation coefficient. see ?stat_cor
-          cor.coeff.args = list(method = "pearson", label.sep = "\n"),
-          xlab = "MAGED1", ylab = "TRIM32")+ 
-  theme(legend.position = "bottom",
-        plot.title = element_text(hjust = 0.5, face ="italic"), #Italic if it is a gene. 
-        axis.text.x = element_text(size=10), axis.ticks.x=element_blank(), 
-        axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 11),
-        axis.text.y = element_text(size = 10))
-
-p2
-
-png("trim32_vs_maged1_pearson.png", res= 200, height = 1800, width = 1200)
+png("trim32_vs_myc_pearson.png", res= 200, height = 1800, width = 1200)
 print(p1)  
 dev.off() 
 
-pdf("trim32_vs_maged1_pearson.pdf", height = 10, width = 8)
+pdf("trim32_vs_myc_pearson.pdf", height = 5, width = 5)
 print(p1)
-dev.off()
-
-png("maged1_vs_trim32_pearson.png", res= 200, height = 1800, width = 1200)
-print(p2)  
-dev.off() 
-
-pdf("maged1_vs_trim32_pearson.pdf", height = 10, width = 8)
-print(p2)
 dev.off()
