@@ -1,15 +1,15 @@
-#######################
-## Loading libraries ##
-#######################
+#####################
+# Loading libraries #
+#####################
 
 library(data.table)
 library(dplyr)
 library(table1)
 library(tidyverse)
 
-#############################
-## Reading expression file ##
-#############################
+###########################
+# Reading expression file #
+###########################
 
 expr <- read.csv2("TMM conversion/TMM_TCGA_HNSC_counts_NoNormal_log2_filtered.csv", sep = ";", as.is = T, check.names = F)
 
@@ -35,11 +35,9 @@ trims$`Patient ID` <- gsub("-01B", "",trims$`Patient ID`)
 
 dup <- as.data.frame(duplicated(trims$id))
 
-
-
-#########################################
-## Subset clinical file with expr file ##
-#########################################
+#######################################
+# Subset clinical file with expr file #
+#######################################
 
 info <- read.csv2("raw data/Clinical_info_HNSC.csv", sep = ";", as.is = T, check.names = F)
 head(info)
@@ -123,9 +121,9 @@ merged$Subtype<- factor(merged$Subtype,
                         levels = c("HNSC_HPV+","HNSC_HPV-"),
                         labels = c("HPV+", "HPV-"))
 
-###############################
-## Analyze clinical features ##
-###############################
+#############################
+# Analyze clinical features #
+#############################
 # Define the check_normality function
 check_normality <- function(data) {
   # Step 2: Identify numerical columns
@@ -326,9 +324,8 @@ table <- table1(~ Sex+
 print(table)
 
 
-
 #########################
-##Write the output file##
+# Write the output file #
 #########################
 write_table1 <- function(x,                   # a table1 object
                          file,                # path to output .pdf file
