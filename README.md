@@ -1,37 +1,50 @@
-# Script for PhD Project 2
+# Script for Paper I
 
-## The folders are divided based on what data has been used: 
+#### The folders are divided based on what data has been used: 
 - **CCLE**: Scripts for the data from the cancer cell line encyclopedia 
 - **PANCAN**: Scripts for the data from the Pan Cancer Atlas project 
 - **TCGA-HNSC**: Scripts for the data from the The Cancer Genome Atlas program 
-- **KO-HSC3**: Scripts for  the data from the KO HSC3 cells 
-- **scRNA**: Scripts for the data from the scRNA-Sequencing data
 - **noroc**: Scripts for the data from the NOROC study
+- **KO-HSC3**: Scripts for  the data from the KO HSC3 cells 
+- **scRNA**: Scripts for the data from the scRNA-Sequencing data 
 
-## CCLE
+##### CCLE 
 - **CCLE_boxplots_all_lines.R**
-    - This script explore the CCLE data and the expression of a specific gene, and all cell lines are included. 
+    - This script explore the CCLE data and the expression of a specific gene, and all cell lines are included 
+- **2025_03_03_subset_cell_lines.R**
+    - This scripts explores the CCLE data in HNSC and the expression of a specific gene.
 
-## PANCAN 
+##### PANCAN 
 - **PanCan_Exp_boxplot.R** 
     - This script explore the PanCan data and the expression of a specific gene, and include all the 33 cancer types. 
 
-## TCGA-HNSC 
+##### TCGA-HNSC 
 - **Survival_script_HNSC_t32.R** 
    - This script explores the different survival parameters such as overall survival, disease-specific survival, and progression free survival in TCGA-HNSC, based on the expression values of a specific gene. 
 - **Pearson_t32.R** 
-    - This script caluclates the pearson correlation between two genes in the TCGA-HNSC data.
+    - This script caluclates the pearson correlation between two genes in the TCGA-HNSC data. 
+- **TRIM32_exp_Normal_VS_Tumor_HNSC.R**
+    - This scripts explores TRIM32 expression in normal versus tumor tissue. 
+- **clinical_table_tcga_hnsc.r**
+    -Create a clinical table based on TRIM32 expression and clinica features. 
 - **heatmap_locations_t32.R**
-    - This script generates a heatmap based on the scaled expression of TCGA-HNSC patients. Include annotations such as HNSC locations and subtype.
- 
-- **heatmap_boxplot_t32**
-    - This scripts generates boxplots showing the expression of a specific protein in the heatmap clusters generated form the heatmap_locations_t32.R script.
+    - Creates a heatmap based on the TCGA-HNSC patients and MYC target genes from the Molecular Signatures Database. HNSC location, HPV-status and MYC expression is added as annotations. 
+- **heatmap_boxplot_t32.R**
+    - Creates boxplots showing the expression of genes in the heatmap clusters created in the script heatmap_locations_t32.R.
 - **limma_hnsc.R**
-    - This scripts performs limma analysis and GSEA on the TCGA-HNSC data.
-- ** TRIM32_exp_Normal_VS_Tumor_HNSC.R**
-    - Generated a boxplots hsowing the difference of expression of a specific gene between normal and tumor samples.
+    - LIMMA analysis of TCGA-HNSC based on TRIM32 expression.
 
-## KO-HSC3 
+#### noroc 
+- **Correlation_one gene to others.R**
+    - Performs correlation analysis between TRIM32 and all proteins in the NOROC data. 
+- **heatmap.R**
+    - Creates a heatmap showing the expression of proteins in the NOROC study filtered for MYC target genes from the Molecular Signtaures Database. 
+- **boxplot_heatmap_clusters.R**
+    - Creates boxplots showing the expression of genes in the heatmap clusters creates in the script heatmap.R. 
+- **lmfit_noroc.R**
+    - Performs a linear regression analysis on the NOROC data based on TRIM32 expression. 
+
+##### KO-HSC3 
 - **limma_hsc3.R** 
     - This script performs LIMMA analysis and GSEA of the LIMMA results. Gene lists for the GSEA can be downloaded from [here](https://www.gsea-msigdb.org/gsea/msigdb/index.jsp). 
 - **housekeeping_genes_hsc3.R**
@@ -39,22 +52,17 @@
 - **correlation_analysis.R** 
     - This script calculates the correlation between the WT/KO HSC3 clones, and creates a heatmap showing the correlation values. 
 
-## scRNA 
+##### scRNA 
 - **processing_script.R**
     - This script process all the samples from the scRNA data and performed quality control. 
 - **cd45n_p_processing.R**
     - This script subset the dataset either on cd45n or cd45p cells. It performs also annotation of the cells.
 - **epithelial_cell_cd45.R**
     - This subset the annotated data for epithelial cells. 
-- **metacells_cd45n.R**
-    - This script creates metacells of the single cells based on KNN.
- 
-## noroc 
-- **lmfit_noroc.R**
-    - This script fits a linear regression model of the NOROC data to calculate differentially expressed proteins. Includes GSEA.
-- **heatmap.R**
-    - Creates a heatmap from the NOROC data.
-- **boxplot_heatmap_clusters.R**
-    - This scripts generates boxplots showing the expression of a specific protein in the heatmap clusters generated form the heatmap.R script.
-- **Correlation_one gene to others.R**
-    - This script performs a Pearson correlation of one specfic protein against all the other proteins in the selected dataset. 
+- **metacells_cd45n_new.R**
+    - This script creates metacells of the single cells based on KNN. 
+
+- **venndiagram.R**
+    - Creates a venndiagram comparing genes between TCGA-HNSC, NOROC, and TRIM32 KO model. 
+- **volcano_filtered_genes.R**
+    - Creates a volcano plot based on the LIMMA results and filter the results based on the MYC target genes from the Molecular Signtaures Database
