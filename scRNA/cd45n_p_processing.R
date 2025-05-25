@@ -1,4 +1,7 @@
-#libraries 
+#############
+# Libraries #
+#############
+
 library(scATOMIC)
 library(plyr)
 library(dplyr)
@@ -27,16 +30,16 @@ subset_seurat <- merged_seurat[, grepl("CD45n", merged_seurat@meta.data$orig.ide
 subset_seurat@meta.data$sample_ID <- sub("_.*", "", subset_seurat@meta.data$sample)
 subset_seurat@meta.data$sample_ID
 
+#################
+# Normalization #
+#################
 
-###################
-## Normalization ##
-###################
 options(future.globals.maxSize = 2 * 1024^3) 
 combined <- SCTransform(subset_seurat, return.only.var.genes = F)
 
-############################
-## Find variable features ##
-############################
+##########################
+# Find variable features #
+##########################
 
 combined <- FindVariableFeatures(combined, selection.method = "vst", nfeatures = 2000)
 
@@ -48,7 +51,9 @@ plot1 <- VariableFeaturePlot(combined)
 plot2 <- LabelPoints(plot = plot1, points = top10, repel = TRUE)
 plot1 + plot2
 
-#Scaling 
+###########
+# Scaling # 
+###########
 
 all.genes <- rownames(combined)
 combined <- ScaleData(combined, features = all.genes)
@@ -73,9 +78,10 @@ p1 <- DimPlot(object = combined_batch, reduction = "harmony", pt.size = .1, grou
 p2 <- VlnPlot(object = combined_batch, features = "harmony_1", group.by = "sample_ID",  pt.size = .1)
 p1+p2
 combined <- combined_batch
-###################
-## Cluster cells ##
-###################
+
+#################
+# Cluster cells #
+#################
 
 combined <- combined %>% 
   FindNeighbors(reduction = "harmony") %>% 
@@ -105,11 +111,11 @@ combined$highlight <- ifelse(combined$sample_ID == highlight_sample, highlight_s
 # 3. Plot using DimPlot, coloring by the new 'highlight' column
 DimPlot(combined, group.by = "highlight", cols = c("red", "grey")) + 
   ggtitle(paste("Highlighting", highlight_sample))
-##########################
-## Cell type Annotation ##
-##########################
 
-#scAtomic# 
+########################
+# Cell type Annotation #
+########################
+#scAtomic
 sparse_matrix <- combined@assays$SCT$counts
 
 cell_predictions <- run_scATOMIC(sparse_matrix)
@@ -139,7 +145,6 @@ saveRDS(combined, "annotated_all_samples.RDS")
 pdf("batch_corr_scatomic_ann_cd45n_all_samples.pdf", height = 8, width = 12)
 print(d)
 dev.off()
-
 
 #SingelR: HPCA 
 library(SingleR)
