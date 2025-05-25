@@ -1,3 +1,7 @@
+#############
+# Libraries #
+#############
+
 library(edgeR)
 library(data.table)
 library(tidyverse)
@@ -5,9 +9,10 @@ library(ggpubr)
 library(Glimma)
 library(EnhancedVolcano)
 library(fgsea)
-#####################
-## Expression file ##
-#####################
+
+###################
+# Expression file #
+###################
 
 expr <- as.data.frame(fread("hsc_wt_ko_counts.csv"))
 expr <- expr[,-c(2:4)]
@@ -21,9 +26,9 @@ colnames(expr) <- c("HSC3_KO_1", "HSC3_KO_3", "HSC3_KO_6", "HSC3_WT_1",
 expr <- subset(expr, select = c(HSC3_KO_3,HSC3_KO_6,HSC3_WT_1,
                                 HSC3_WT_3))
 
-##############################
-## Create group information ## 
-##############################
+############################
+# Create group information #
+############################
 
 meta <- as.data.frame(fread("metadata_hsc3.csv"))
 meta <- meta[,-1]
@@ -34,25 +39,21 @@ meta <- subset(meta, meta$name %in% c("HSC3_KO_3","HSC3_KO_6","HSC3_WT_1",
 filtered_colnames <- intersect(names(expr), meta$name)
 expr <- expr[, filtered_colnames, drop = FALSE]
 
-
 #Make sure the group info is in the same order as the expr file
 rownames(meta) <- NULL
 meta <- column_to_rownames(meta, "name")
 expr<- expr[,rownames(meta),]
 all(rownames(meta) == colnames(expr))
 
-
 treatment <- as.factor(meta$treatment)
 
-
-###########
-## LIMMA ##
-###########
+#########
+# LIMMA #
+#########
 
 #Create DGEList object
 d0 <- DGEList(expr)
 d0
-
 
 #Filtering
 keep.exprs <- filterByExpr(d0, group= treatment) #By default it filters out genes that has total counts below 10 in the minimum number of samples
@@ -62,7 +63,6 @@ dim(d0)
 #Normalizing the actual data now and visualizing
 d0 <- calcNormFactors(d0, method = "TMM")
 lcpm <- cpm(d0, log=TRUE)
-
 
 #Expression values between the conditions 
 house <- as.data.frame(lcpm)
@@ -103,19 +103,14 @@ boxplot(lcpm,col=col_group)
 
 design <- model.matrix(~0+treatment)
 
-
-
 colnames(design) <- gsub("treatment","", colnames(design))
 design
-
 
 v <- voom(d0, design, plot=TRUE)
 vfit <- lmFit(v, design)
 
-
 contr <- makeContrasts(KO - WT, levels = colnames(coef(vfit)))
 contr
-
 
 vfit <- contrasts.fit(vfit, contr)
 efit <- eBayes(vfit)
@@ -148,14 +143,12 @@ pdf("figures/volcano/volvanoplot_trim32_WT_1_3_KO_3_6_v2.pdf", height = 8, width
 print(v)
 dev.off()
 
-##########
-## GSEA ##
-##########
+########
+# GSEA #
+########
 #indegree_rank <- setNames(object=top.table[,"t"], rownames(top.table))
 
 top.table <- fread("limma_trim32_WT_1_3_KO_3_6_v2.csv")
-
-
 #top.table$V1 <- rownames(top.table)
 
 indegree_rank <- top.table %>%
@@ -168,7 +161,7 @@ gene_list<- indegree_rank$signed_rank_stats
 names(gene_list)<- rownames(indegree_rank)
 
 ## Run fgsea
-pathways <- gmtPathways("gene_lists/c5.go.cc.v2024.1.Hs.symbols.gmt")
+pathways <- gmtPathways("gene_lists/h.all.v2023.2.Hs.symbols.gmt")
 set.seed(123)
 fgseaRes <- fgsea(pathways, gene_list, minSize=15, maxSize=500, nperm=1000)
 head(fgseaRes)
@@ -180,15 +173,12 @@ sig$pathway[sig$NES > 0][1:10]
 # Top 10 pathways enriched in patients with WT
 sig$pathway[sig$NES < 0][1:10]
 
-#fwrite(sig, "gsea_gobp_highvslow_t45_subtype_corr_arranged.csv", row.names = TRUE)
-
-
 dat <- data.frame(fgseaRes)
 # Settings
 fdrcut <- 0.05 # FDR cut-off to use as output for significant signatures
 dencol_neg <- "blue" # bubble plot color for negative ES KO
 dencol_pos <- "red" # bubble plot color for positive ES WT
-signnamelength <- 3 # set to remove prefix from signature names (2 for "GO", 4 for "KEGG", 8 for "REACTOME")
+signnamelength <- 8 # set to remove prefix from signature names (2 for "GO", 4 for "KEGG", 8 for "REACTOME")
 asp <- 3 # aspect ratio of bubble plot
 charcut <- 100 # cut signature name in heatmap to this nr of characters
 
@@ -206,9 +196,9 @@ dat$NAME <- a
 
 # Determine top 10 positive and negative NES signatures
 top_pos <- dat[dat$NES > 0, ]
-top_pos <- top_pos[order(-top_pos$NES), ][1:10, ]  # Order by NES descending and take top 10
+#top_pos <- top_pos[order(-top_pos$NES), ][1:10, ]  # Order by NES descending and take top 10
 top_neg <- dat[dat$NES < 0, ]
-top_neg <- top_neg[order(top_neg$NES), ][1:10, ]  # Order by NES ascending and take top 10
+#top_neg <- top_neg[order(top_neg$NES), ][1:10, ]  # Order by NES ascending and take top 10
 # Combine the top positive and negative NES signatures
 dat2 <- rbind(top_pos, top_neg)
 dat2$signature <- factor(dat2$NAME, levels = rev(dat2$NAME))
@@ -216,7 +206,7 @@ dat2$signature <- factor(dat2$NAME, levels = rev(dat2$NAME))
 # Determine what signatures to plot (based on FDR cut)
 dat2 <- dat2[dat2[,"padj"]<fdrcut,]
 dat2 <- dat2[order(dat2[,"padj"]),] 
-dat2$signature <- factor(dat2$NAME, (as.character(dat2$NAME)))
+dat2$signature <- factor(dat2$NAME, rev(as.character(dat2$NAME)))
 # Determine what labels to color
 sign_neg <- which(dat2[,"NES"]<0)
 sign_pos <- which(dat2[,"NES"]>0)
@@ -227,7 +217,6 @@ signcol[sign_pos] <- "red" # text color of positive signatures
 signcol <- rev(signcol) # need to revert vector of colors, 
 #because ggplot starts plotting these from below
 
-
 # Plot bubble plot
 g<-ggplot(dat2, aes(x=padj,y=signature,size=size))+
   geom_point(aes(fill=NES), shape=21)+
@@ -236,17 +225,17 @@ g<-ggplot(dat2, aes(x=padj,y=signature,size=size))+
   scale_size_area(max_size=10,guide="legend")+
   scale_fill_gradient2(low=dencol_neg, high=dencol_pos) + 
   scale_color_identity(labels = c("blue" = "sign_neg", "red" = "sign_pos"), guide = "legend")+
-  ggtitle("GO CC: KO vs WT TRIM32")+ 
+  ggtitle("Hallmark: KO vs WT TRIM32")+ 
   theme(axis.text.y = element_text(colour=signcol),
         plot.title = element_text(hjust = 0.5, face ="bold"))+
   theme(aspect.ratio=asp, axis.title.y=element_blank()) # test aspect.ratio
 
 g
 
-png("figures/go_enrichemnt/go_cc_gsea_trim32_WT_1_3_KO_3_6_2025_02_28.png", res = 200, height = 1800, width = 1500)
+png("figures/hallmark_trim32_WT_1_3_KO_3_6_v2.png", res = 200, height = 1800, width = 1500)
 print(g)
 dev.off()
 
-pdf("figures/go_enrichemnt/go_cc_gsea_trim32_WT_1_3_KO_3_6_2025_02_28.pdf", height = 10, width = 8)
+pdf("figures/hallmark_trim32_WT_1_3_KO_3_6_v2.pdf", height = 10, width = 8)
 print(g)
 dev.off()
