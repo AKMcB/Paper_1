@@ -1,12 +1,12 @@
-###############
-## Libraries ##
-###############
+#############
+# Libraries #
+#############
 
 library(tidyverse)
 
-#########################
-# Read expression file ##
-#########################
+########################
+# Read expression file #
+########################
 
 expr <- read.csv2("Raw data/NOROC_TMT_norm_outlier_removed_patient_removed.csv", sep = ";", as.is = T,check.names = F)
 expr <- expr[,-c(2,3)]
@@ -21,9 +21,9 @@ expr$`Gene names` <- NULL
 expr <- as.data.frame(t(expr))
 expr <- rownames_to_column(expr, "id")
 
-#########################
-## Heatmap column info ##
-#########################
+#######################
+# Heatmap column info #
+#######################
 
 ann2 <- read.csv2("2025_03_04_cluster_column_order_trim32_expr_noroc_myc_target_genes.csv", as.is = T, check.names = F)
 ann2 <- ann2[,-1]
@@ -36,15 +36,11 @@ merged$Cluster<- factor(merged$Cluster,
                         levels= c("cluster1", "cluster2", "cluster3"), 
                         labels = c("Cluster 1", "Cluster 2", "Cluster 3"))
 
-
-
-
 my_comparisons <- list( c("Cluster 1", "Cluster 2"),
                         c("Cluster 1", "Cluster 3"),
                         c("Cluster 2", "Cluster 3")) 
 symnum.args <- list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), 
                     symbols = c("****", "***", "**", "*", "ns"))
-
 
 merged_long <- pivot_longer(merged, cols = c(TRIM32), 
                             names_to = "gene", values_to = "expression")
@@ -76,4 +72,3 @@ dev.off()
 pdf("trim32_expr_noroc_cluster_2025_02_28.pdf", height = 10, width = 8)
 print(p)
 dev.off()
-
