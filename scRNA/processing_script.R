@@ -1,6 +1,6 @@
-###############
-## Libraries ##
-###############
+#############
+# Libraries #
+#############
 
 library(Seurat)
 library(tidyverse)
@@ -35,9 +35,10 @@ opt <- parse_args(opt_parser)
 #Set variables from command line arguments 
 SAMPLE_FILE <- opt$sample_file
 SAMPLE_FILE <- "GSE164690_RAW/"
-##########################
-## Create Seurat Object ##
-##########################
+
+########################
+# Create Seurat Object #
+########################
 
 main_folder <- list.files(path = SAMPLE_FILE, pattern = "HN")
 folders <- c("PBL", "CD45p", "CD45n")
@@ -82,6 +83,7 @@ for (i in 1:length(main_folder)) {
   # Subset Seurat object based on QC metrics, using MAD-based threshold for mitochondrial content
   seurat_obj <- subset(seurat_obj, subset = nFeature_RNA > low_feature_threshold & nFeature_RNA < high_thresh & percent_mito < high_threshold_MT)
   seurat_obj$sample <- sample_name
+    
   # Additional QC to identify and remove doublets
   sce <- as.SingleCellExperiment(DietSeurat(seurat_obj))
   sce <- scDblFinder(sce)
