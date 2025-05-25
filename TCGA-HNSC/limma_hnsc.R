@@ -1,3 +1,7 @@
+#############
+# Libraries #
+#############
+
 library(edgeR)
 library(data.table)
 library(tidyverse)
@@ -7,9 +11,9 @@ library(biomaRt)
 library(Homo.sapiens)
 library(EnhancedVolcano)
 
-#####################
-## Expression file ##
-#####################
+###################
+# Expression file #
+###################
 
 expr <- as.data.frame(fread("TMM conversion/TCGA-HNSC.htseq_counts.tsv"))
 expr$Ensembl_ID <- gsub("\\..*","", expr$Ensembl_ID)
@@ -23,7 +27,6 @@ test <- as.data.frame(colnames(expr))
 #2 metastatic -06 
 #44 normal samples -11 
 
-
 expr <- as.data.frame(t(expr))
 expr <- rownames_to_column(expr,"id")
 
@@ -35,7 +38,6 @@ expr$id <- gsub("-01B", "",expr$id)
 
 dup <- as.data.frame(duplicated(expr$id))
 
-
 #Xena browser uploads the data after log2(x+1) trasformation. 
 #So converting it to linear scale to get the raw count data
 expr <- expr[,-c(60485:60489)]
@@ -46,9 +48,9 @@ expr <- as.data.frame(t(expr))
 
 expr <- 2^expr
 
-##############################
-## Create group information ## 
-##############################
+############################
+# Create group information #
+############################
 
 t32_1 <- read.csv2("raw data/TMM_TCGA_HNSC_counts_NoNormal_log2_filtered.csv", sep = ";", as.is = T, check.names = F)
 rownames(t32_1) <- t32_1[,1]
@@ -67,11 +69,9 @@ rownames(t32_1) <- t32_1[,1]
 t32_1 <- t32_1[,-1]
 t32_1 <- as.data.frame(t(t32_1))
 
-
 filtered_colnames <- intersect(names(expr), names(t32_1))
 df1_filtered <- expr[, filtered_colnames, drop = FALSE]
 expr <- df1_filtered
-
 
 #Make sure the group info is in the same order as the expr file
 t32_1 <- rownames_to_column(t32_1, "id")
@@ -88,11 +88,9 @@ filtered_colnames <- intersect(names(expr), info$`Patient ID`)
 df1_filtered <- expr[, filtered_colnames, drop = FALSE]
 expr <- df1_filtered
 
-
 filtered_colnames <- intersect(rownames(t32_2), info$`Patient ID`)
 df1_filtered <- t32_2[filtered_colnames, ,drop = FALSE]
 t32_2 <- df1_filtered
-
 
 t32_2$TRIM32_expression <- ifelse(t32_2$ENSG00000119401 >= median(t32_2$ENSG00000119401), 'High', "Low")
 
@@ -102,21 +100,17 @@ bottom <- t32_2 %>% filter(t32_2$ENSG00000119401 < quantile(t32_2$ENSG0000011940
 combined <- rbind(top, bottom)
 t32_2 <- combined
 
-
-
 t32_2 <- t32_2 %>% arrange(TRIM32_expression)
 expr<- expr[,rownames(t32_2),]
 all(rownames(t32_2) == colnames(expr))
 
-
 table(t32_2$TRIM32_expression)
 
 group <- as.factor(t32_2$TRIM32_expression)
-#subtype <- as.factor(t45_1$BRCA_Subtype_PAM50)
 
-######################
-## gene annotations ##
-######################
+####################
+# gene annotations #
+####################
 raw_data <- expr
 raw_data <- rownames_to_column(raw_data, "gene")
 ensembl <- raw_data$gene
@@ -127,7 +121,6 @@ mart <- useDataset("hsapiens_gene_ensembl", useMart("ensembl"))
 G_list <- getBM(mart= mart, filters= "ensembl_gene_id", values= ensembl, attributes= c("ensembl_gene_id",
                                                                                       "hgnc_symbol", "entrezgene_id")
 )
-
 
 G_list$entrezgene_id <- NULL
 
@@ -161,18 +154,14 @@ expr_1 <- column_to_rownames(expr_1, "hgnc_symbol")
 d0 <- DGEList(expr_1)
 d0
 
-
 #Filtering
 keep.exprs <- filterByExpr(d0, group= group) #By default it filters out genes that has total counts below 10 in the minimum number of samples
 d0 <- d0[keep.exprs,, keep.lib.sizes=FALSE]
 dim(d0)
 
-
 #Normalizing the actual data now and visualizing
 d0 <- calcNormFactors(d0, method = "TMM")
 lcpm <- cpm(d0, log=TRUE)
-
-
 
 myShapes <- c(0,1)
 myColors <- c("red", "blue")
@@ -184,20 +173,16 @@ plotMDS(lcpm, col=col_group, pch=shape_group,dim.plot = c(1,2))
 
 legend("topright", col=c("red","blue"),pch = c(0,1), legend=c("High TRIM32","Low TRIM32"))
  
-
 design <- model.matrix(~0+group)
 
 colnames(design) <- gsub("group","", colnames(design))
 design
 
-
 v <- voom(d0, design, plot=TRUE)
 vfit <- lmFit(v, design)
 
-
 contr <- makeContrasts(High - Low, levels = colnames(coef(vfit)))
 contr
-
 
 vfit <- contrasts.fit(vfit, contr)
 efit <- treat(vfit)
@@ -206,7 +191,6 @@ summary(decideTests(efit))
 
 top.table <- topTable(efit, sort.by = "P", n = Inf, coef = 1)
 fwrite(top.table, "limma/limma_high_vs_low_trim32_2025_02_26.csv", row.names = T)
-
 
 top.table <- subset(top.table, rownames(top.table) != "TRIM32")
 
@@ -229,10 +213,9 @@ png("limma/for manuscript/volcanoplot_limma_trim32_top_bottom_2025_02_26.png",re
 print(v)
 dev.off()
 
-
-##########
-## gsea ##
-##########
+########
+# GSEA #
+########
 library(fgsea)
 top.table <- fread("limma/for manuscript/limma_top_bottom_trim32_2025_02_26.csv", sep = ",")
 
@@ -248,7 +231,7 @@ gene_list<- indegree_rank$signed_rank_stats
 names(gene_list)<- rownames(indegree_rank)
 
 ## Run fgsea
-pathways <- gmtPathways("gene_lists/c5.go.cc.v2024.1.Hs.symbols.gmt")
+pathways <- gmtPathways("gene_lists/h.all.v2023.2.Hs.symbols.gmt")
 set.seed(123)
 fgseaRes <- fgsea(pathways, gene_list, minSize=15, maxSize=500, nperm=1000)
 head(fgseaRes)
@@ -284,9 +267,9 @@ a <- gsub("_", " ", a)
 dat$NAME <- a
 #Determine top 10 positive and negative NES signatures
 top_pos <- dat[dat$NES > 0, ]
-top_pos <- top_pos[order(-top_pos$NES), ][1:10, ]  # Order by NES descending and take top 10
+#top_pos <- top_pos[order(-top_pos$NES), ][1:10, ]  # Order by NES descending and take top 10
 top_neg <- dat[dat$NES < 0, ]
-top_neg <- top_neg[order(top_neg$NES), ][1:10, ]  # Order by NES ascending and take top 10
+#top_neg <- top_neg[order(top_neg$NES), ][1:10, ]  # Order by NES ascending and take top 10
 # Combine the top positive and negative NES signatures
 dat2 <- rbind(top_pos, top_neg)
 dat2$signature <- factor(dat2$NAME, levels = rev(dat2$NAME))
@@ -305,7 +288,6 @@ signcol[sign_pos] <- "red" # text color of positive signatures
 signcol <- rev(signcol) # need to revert vector of colors, 
 #because ggplot starts plotting these from below
 
-
 # Plot bubble plot
 g<-ggplot(dat2, aes(x=padj,y=signature,size=size))+
   geom_point(aes(fill=NES), shape=21)+
@@ -321,10 +303,10 @@ g<-ggplot(dat2, aes(x=padj,y=signature,size=size))+
 
 g
 
-pdf("limma/for manuscript/go_CC_limma_trim32_top_bottom_2025_02_28.pdf", heigh = 10, width =10)
+pdf("limma/for manuscript/hallmark_limma_trim32_top_bottom_2025_02_26.pdf", heigh = 10, width =10)
 print(g)
 dev.off()
 
-png("limma/for manuscript/go_CC_limma_trim32_top_bottom_2025_02_26.png",res= 200, heigh = 2000, width =1800)
+png("limma/for manuscript/hallmark_limma_trim32_top_bottom_2025_02_26.png",res= 200, heigh = 2000, width =1800)
 print(g)
 dev.off()
