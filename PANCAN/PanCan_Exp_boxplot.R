@@ -2,11 +2,12 @@
 # Libraries #
 #############
 
+library(tibble)
+library(dplyr)
 library(ggpubr)
 library(ggplot2)
 library(tidytext)
 library(data.table)
-library(tidyverse)
 
 ########################
 # Read expression file #
