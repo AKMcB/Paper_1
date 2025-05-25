@@ -1,4 +1,7 @@
-#libraries 
+#############
+# Libraries #
+#############
+
 library(scATOMIC)
 library(plyr)
 library(dplyr)
@@ -44,15 +47,16 @@ combined <- combined[, grepl("Epithelial cells", combined@meta.data$cell_type_si
 
 DimPlot(combined, group.by = "cell_type_singler_BPE_sub")
 
-###################
-## Normalization ##
-###################
+##################
+# Normalization #
+##################
+
 options(future.globals.maxSize = 2 * 1024^3) 
 combined <- SCTransform(combined, return.only.var.genes = F)
 
-############################
-## Find variable features ##
-############################
+##########################
+# Find variable features #
+##########################
 
 combined <- FindVariableFeatures(combined, selection.method = "vst", nfeatures = 2000)
 
@@ -83,9 +87,9 @@ p1 <- DimPlot(object = combined, reduction = "harmony", pt.size = .1, group.by =
 p2 <- VlnPlot(object = combined, features = "harmony_1", group.by = "sample_ID",  pt.size = .1)
 p1+p2
 
-###################
-## Cluster cells ##
-###################
+#################
+# Cluster cells #
+#################
 
 combined <- combined %>% 
   FindNeighbors(reduction = "harmony") %>% 
@@ -104,6 +108,7 @@ print(p1)
 dev.off()
 
 saveRDS(combined,"cd45n_epithelial_cells.RDS")
+
 #####################
 # Feature & vlnplot #
 #####################
