@@ -1,6 +1,15 @@
+#############
+# Libraries #
+##############
+
 library(tibble)
 library(ggpubr)
-library(readr)
+library(data.table)
+library(dplyr)
+
+###################
+# Expression data #
+###################
 
 expr <- as.data.frame(fread("TMM_TCGA_HNSC_counts_log2.csv"))
 expr_1 <- expr 
@@ -13,7 +22,6 @@ normal <- select(normal, c(V1, ENSG00000119401))
 expr_1 <- expr_1[-grep('-11A', expr_1$V1),, drop = FALSE]
 expr_1 <- select(expr_1, c(V1, ENSG00000119401))
 
-
 #Change the patient id before merging
 normal$sample_type <- "Normal"
 expr_1$sample_type <- "Tumor"
@@ -21,15 +29,15 @@ expr_1$sample_type <- "Tumor"
 #Merge by rows 
 merge <- rbind(expr_1, normal)
 
-
 dup <- as.data.frame(duplicated(merge$V1)) #no duplicates
 
 my_comparisons <- list( c("Normal", "Tumor") ) 
 symnum.args <- list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), 
                     symbols = c("****", "***", "**", "*", "ns"))
 
-#Make boxplot 
-
+################
+# Make boxplot #
+################
 p <- ggplot(merge, aes(x = sample_type, y = ENSG00000119401, fill = sample_type))+
   geom_point(alpha=0.5,position = position_jitter(width = 0.3, height = 0.5), shape= 21, size= 3)+
   geom_boxplot(fill = "white", alpha = 0.8, outlier.shape = NA) +
