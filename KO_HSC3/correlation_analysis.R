@@ -31,14 +31,9 @@ expr <- expr[,-c(2,9)]
 
 expr <- column_to_rownames(expr, "Identifier")
 
-#For t47d data
-colnames(expr) <- c("T47D_KO_15", "T47D_KO_21", "T47D_KO_29", "T47D_KO_33", 
-                    "T47D_WT_1", "T47D_WT_2", "T47D_WT_3", "T47D_CCLE") 
-
 #For hsc3 data
 colnames(expr) <- c("HSC3_KO_1", "HSC3_KO_3", "HSC3_KO_6", "HSC3_WT_1", 
                     "HSC3_WT_2", "HSC3_WT_3", "HSC3_CCLE")
-
 
 #############
 # Meta data #
