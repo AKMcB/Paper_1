@@ -29,7 +29,7 @@ expr <- as.data.frame(t(expr))
 expr <- tibble::rownames_to_column(expr, "id")
 dup<-expr[duplicated(expr$id),]
 
-trims <- expr %>% select(c("id", "ENSG00000119401"))
+trims <- expr %>% select(c("id", "ENSG00000119401", "ENSG00000136997"))
 
 trims$id <- gsub("-01A", "",trims$id)
 trims$id <- gsub("-01B", "",trims$id)
@@ -68,6 +68,13 @@ trim_dss$TRIM32_expression <- ifelse(trim_dss$ENSG00000119401 >= median(trim_dss
 trim_pfi$TRIM32_expression <- ifelse(trim_pfi$ENSG00000119401 >= median(trim_pfi$ENSG00000119401), 'High', "Low")
 
 trim_os$TRIM32_expression <- ifelse(trim_os$ENSG00000119401 >= median(trim_os$ENSG00000119401), 'High', "Low")
+
+
+trim_dss$MYC_expression <- ifelse(trim_dss$ENSG00000136997 >= median(trim_dss$ENSG00000136997), 'High', "Low")
+
+trim_pfi$MYC_expression <- ifelse(trim_pfi$ENSG00000136997 >= median(trim_pfi$ENSG00000136997), 'High', "Low")
+
+trim_os$MYC_expression <- ifelse(trim_os$ENSG00000136997 >= median(trim_os$ENSG00000136997), 'High', "Low")
 
 
 trim_dss <- trim_dss[complete.cases(trim_dss),] #495 -> 470
