@@ -1,4 +1,3 @@
-
 #############
 # Libraries #
 #############
@@ -32,14 +31,12 @@ colnames(raw) <- c("HSC3_KO_1", "HSC3_KO_3", "HSC3_KO_6", "HSC3_WT_1",
 
 raw$Gene <- rownames(raw)
 
-genes <- as.data.frame(gmtPathways("gene_lists/HALLMARK_PI3K_AKT_MTOR_SIGNALING.v2023.2.Hs (1).gmt"))
-
 housekeeping <- c("GAPDH", "B2M", "ACTB", "TBP", "RP",
                   "RRN18S", "DIMT1", "TUBA1A", "GUSB", "PGK1", "RPL13A",
                   "PUM1", "DHX9", "MZT2B", "UBXN4", "LARP1", "TAF2", "STX5",
                   "SYMPK", "TMEM11", "SDHA", "TFRC", "HMBS")
 
-hs <- subset(raw, (Gene %in% genes$HALLMARK_PI3K_AKT_MTOR_SIGNALING))
+hs <- subset(raw, (Gene %in% housekeeping))
 hs$Gene <- NULL
 
 ###########
@@ -76,10 +73,8 @@ h <- hs_scaled
 #Log2 transformed
 h <- as.matrix(log2(1+hs))
 
-
 h_breaks <- seq(min(h), max(h), length.out = 10)
 h_breaks
-
 
 #Reposition the breaks in quantile positions
 quantile_breaks <- function(xs, n = 10) {
@@ -87,19 +82,14 @@ quantile_breaks <- function(xs, n = 10) {
   breaks[!duplicated(breaks)]
 }
 
-
 h_breaks <- quantile_breaks(h, n = 11)
 h_breaks
-
 
 row_dist <- as.dist(1-cor(t(h), method = "pearson"))
 row_hc <- hclust(row_dist, method = "complete")
 Rowv=dendsort(as.dendrogram(row_hc), isRevers=TRUE, type = "average") 
 
-
 col_fun <- colorRamp2(quantile_breaks(h, n = 11), c("#1e90ff", "#0479f5", "#0467d2", "#0356af", "#02458c","#023369","#012246", "#130202", "#6b0002","#b20004","#ff0000"))
-
-
 
 ht <- Heatmap(h,col = col_fun,
               cluster_columns = F,
@@ -108,7 +98,7 @@ ht <- Heatmap(h,col = col_fun,
               #top_annotation = ha,
               #left_annotation = hr,
               show_column_names = T,
-              show_row_names = F,
+              show_row_names = T,
               cluster_rows = Rowv,
               row_title_gp = gpar(fontsize=12),
               column_title_gp = gpar(fontsize=12),
