@@ -6,6 +6,7 @@ library(limma)
 library(tidyverse)
 library(fgsea)
 library(EnhancedVolcano)
+
 #########################
 # Read expression file ##
 #########################
@@ -22,6 +23,7 @@ rownames(expr) <- expr[,1]
 expr$`Gene names` <- NULL
 
 str(expr)
+
 ###################
 # make group info #
 ###################
@@ -50,8 +52,6 @@ all(rownames(trim32) == colnames(expr))
 
 level <- as.factor(trim32$TRIM32_level)
 
-
-
 #####################
 # Linear regression #
 #####################
@@ -74,8 +74,6 @@ shape_group <- myShapes[level]
 plotMDS(expr, col=col_group, pch=shape_group,dim.plot = c(1,2))
 
 legend("topright", col=c("red","blue"),pch = c(0,1), legend=c("High TRIM32","Low TRIM32"))
-
-
 
 vfit <- lmFit(expr, design)
 vfit <- contrasts.fit(vfit, contrasts=contr.matrix)
@@ -118,14 +116,13 @@ png("2025_03_04_volcanoplot_noroc_trim32_high_vs_low.png",res= 200, heigh = 2000
 print(v)
 dev.off()
 
-
 ########
 # GSEA #
 ########
 
 indegree_rank <- setNames(object=top.table[,"t"], rownames(top.table))
 
-top.table <- fread("limma_results/limma_trim32_WT_1_3_KO_3_6_v2.csv")
+top.table <- fread("2025_03_07_linear_reg_noroc_trim32_high_vs_low.csv")
 
 
 #top.table$V1 <- rownames(top.table)
@@ -137,7 +134,7 @@ indegree_rank <- top.table %>%
 #rownames(indegree_rank) <- indegree_rank$V1
 
 gene_list<- indegree_rank$signed_rank_stats
-names(gene_list)<- rownames(indegree_rank)
+names(gene_list)<- indegree_rank$V1
 
 ## Run fgsea
 pathways <- gmtPathways("h.all.v2023.2.Hs.symbols.gmt")
@@ -153,7 +150,6 @@ sig$pathway[sig$NES > 0][1:10]
 sig$pathway[sig$NES < 0][1:10]
 
 #fwrite(sig, "gsea_gobp_highvslow_t45_subtype_corr_arranged.csv", row.names = TRUE)
-
 
 dat <- data.frame(fgseaRes)
 # Settings
