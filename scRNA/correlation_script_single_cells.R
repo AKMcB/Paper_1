@@ -1,3 +1,7 @@
+#############
+# Libraries #
+#############
+
 library(dplyr)
 library(Seurat)
 library(ggplot2)
@@ -6,7 +10,10 @@ library(SeuratData)
 library(RColorBrewer)
 set.seed(1234)
 
-#read RDS object 
+###################
+# Read RDS object # 
+###################
+
 combined <- readRDS("annotated_all_samples_cd45n_batch_corr_epithelial_cells.RDS")
 
 combined_cancer <- combined[, grepl("Cancer", combined@meta.data$pan_cancer_cluster)]
