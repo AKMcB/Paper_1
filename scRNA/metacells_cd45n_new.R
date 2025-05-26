@@ -151,6 +151,7 @@ print(f1)
 print(f2)
 dev.off()
 
+#Function from https://www.biostars.org/p/458261/
 vp_case1 <- function(gene_signature, file_name, test_sign){
   plot_case1 <- function(signature, y_max = NULL){
     VlnPlot(combined_metacell, features = signature,
