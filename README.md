@@ -56,7 +56,7 @@
 - **correlation_analysis.R** 
     - This script calculates the correlation between the WT/KO HSC3 clones, and creates a heatmap showing the correlation values. 
 
-##### scRNA 
+#### scRNA 
 - **processing_script.R**
     - This script process all the samples from the scRNA data and performed quality control. 
 - **cd45n_p_processing.R**
