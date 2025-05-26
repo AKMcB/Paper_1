@@ -327,6 +327,7 @@ print(table)
 #########################
 # Write the output file #
 #########################
+#https://github.com/benjaminrich/table1/issues/33                                                      
 write_table1 <- function(x,                   # a table1 object
                          file,                # path to output .pdf file
                          landscape = FALSE,   # landscape print?
