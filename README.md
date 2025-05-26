@@ -8,17 +8,17 @@
 - **KO-HSC3**: Scripts for  the data from the KO HSC3 cells 
 - **scRNA**: Scripts for the data from the scRNA-Sequencing data 
 
-##### CCLE 
+#### CCLE 
 - **CCLE_boxplots_all_lines.R**
     - This script explore the CCLE data and the expression of a specific gene, and all cell lines are included 
 - **2025_03_03_subset_cell_lines.R**
     - This scripts explores the CCLE data in HNSC and the expression of a specific gene.
 
-##### PANCAN 
+#### PANCAN 
 - **PanCan_Exp_boxplot.R** 
     - This script explore the PanCan data and the expression of a specific gene, and include all the 33 cancer types. 
 
-##### TCGA-HNSC 
+#### TCGA-HNSC 
 - **Survival_script_HNSC_t32.R** 
    - This script explores the different survival parameters such as overall survival, disease-specific survival, and progression free survival in TCGA-HNSC, based on the expression values of a specific gene. 
 - **Pearson_t32.R** 
@@ -48,7 +48,7 @@
 - **Survival_script_NOROC.R**
     - Explores disease-specific survival of NOROC patients based on TRIM32 and MYC TMA score
 
-##### KO-HSC3 
+#### KO-HSC3 
 - **limma_hsc3.R** 
     - This script performs LIMMA analysis and GSEA of the LIMMA results. Gene lists for the GSEA can be downloaded from [here](https://www.gsea-msigdb.org/gsea/msigdb/index.jsp). 
 - **housekeeping_genes_hsc3.R**
