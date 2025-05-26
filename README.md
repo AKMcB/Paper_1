@@ -42,7 +42,11 @@
 - **boxplot_heatmap_clusters.R**
     - Creates boxplots showing the expression of genes in the heatmap clusters creates in the script heatmap.R. 
 - **lmfit_noroc.R**
-    - Performs a linear regression analysis on the NOROC data based on TRIM32 expression. 
+    - Performs a linear regression analysis on the NOROC data based on TRIM32 expression.
+- **clinical_table.r**
+    - Create a clinical table based on the TMA score of TRIM32
+- **Survival_script_NOROC.R**
+    - Explores disease-specific survival of NOROC patients based on TRIM32 and MYC TMA score
 
 ##### KO-HSC3 
 - **limma_hsc3.R** 
