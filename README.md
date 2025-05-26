@@ -33,6 +33,8 @@
     - Creates boxplots showing the expression of genes in the heatmap clusters created in the script heatmap_locations_t32.R.
 - **limma_hnsc.R**
     - LIMMA analysis of TCGA-HNSC based on TRIM32 expression.
+- **updated_hnsc_locations.R**
+    - Refinement of TCGA-HNSC cancer sites
 
 #### noroc 
 - **Correlation_one gene to others.R**
