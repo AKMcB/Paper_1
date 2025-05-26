@@ -35,10 +35,12 @@ difference <- setdiff(info2$ID,info$id_tma)
 result <- info[info$id_tma %in% difference, ]
 
 #2 patients missing -B12 and O157- too few cells
+
 info3 <- read_xlsx("../myc_scoring/myc_scoring.xlsx", sheet = 8)
 info3 <- dplyr::select(info3, c(id_sample,myc_value))
 
 # 3 patients missing- B-12, T-4, T-45- too few cells 
+
 info_comb <- merge(info, info2, by.x = "id_tma", by.y = "ID") #131 patients B-12 was in the first info file
 info_comb <- merge(info_comb, info3, by.x ="id_tma", by.y = "id_sample") #131 patients - B-12, t4, T45 was already gone from the first file
 
@@ -69,10 +71,6 @@ replacement_vector <- c("high" = "High/Moderate", "moderate" = "High/Moderate",
                         "low" = "Low/Negative", "negative" ="Low/Negative")
 info_comb$t32_level <- replacement_vector[info_comb$t32_level]
 str(info_comb)
-info_comb$t32_level<- factor(info_comb$t32_level,
-                              levels = c("high", "moderate", "low", "negative"),
-                              labels = c("High/Moderate", "High/Moderate", "Low/Negative", "Low/Negative"))
-
 
 #remove DSS_months at 0 value 
 DSS <- subset(info_comb, info_comb$Follow_up_months > 0) #119
@@ -83,12 +81,12 @@ DSS <- subset(info_comb, info_comb$Follow_up_months > 0) #119
 DSS$years <- DSS$Follow_up_months/12
 
 #Remove NA form the df
-DSS <- DSS[complete.cases(DSS),]
+#DSS <- DSS[complete.cases(DSS),]
 
-hmt32 <- subset(DSS, DSS$t32_level == "High/Moderate")
-lnt32 <- subset(DSS, DSS$t32_level == "Low/Negative")
+#hmt32 <- subset(DSS, DSS$t32_level == "High/Moderate")
+#lnt32 <- subset(DSS, DSS$t32_level == "Low/Negative")
 
-table(hmt32$myc_value)
+
 #Define survival
 survival = Surv(time= DSS$years, event = DSS$dss)
 
@@ -103,7 +101,7 @@ p <- ggsurvplot(fit= survival_fit,
                   ylab = "DSS Probability",
                   ylim=c(0.25,1), 
                   xlim=c(0,5.2),
-                  #palette = c("#E69F00","#0072B2","#009E73","#CC79A7","#F64D41","#6D0026"),
+                  palette = c("#E69F00","#0072B2","#009E73","#CC79A7","#F64D41","#6D0026"),
                   pval.coord=c(0.1,0.27), 
                   break.x.by= 1,         
                   conf.int = T, 
