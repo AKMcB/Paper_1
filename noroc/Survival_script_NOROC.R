@@ -1,4 +1,6 @@
-#Libraries
+#############
+# Libraries #
+#############
 library(tidyverse)
 library(survival)
 library(survminer)
@@ -10,7 +12,6 @@ library(readxl)
 info <- read_sav("NOROC TMA_patient data (2).sav")
 
 #7 patients missing-unknown reason 
-
 unique(info$Hospital)
 symbol <- c("Bergen" = "B", "Oslo Universitetssykehus, Oslo" = "O", "Troms??" = "T")
 info$Hospital <- as.factor(info$Hospital)
@@ -34,12 +35,10 @@ difference <- setdiff(info2$ID,info$id_tma)
 result <- info[info$id_tma %in% difference, ]
 
 #2 patients missing -B12 and O157- too few cells
-
 info3 <- read_xlsx("../myc_scoring/myc_scoring.xlsx", sheet = 8)
 info3 <- dplyr::select(info3, c(id_sample,myc_value))
 
 # 3 patients missing- B-12, T-4, T-45- too few cells 
-
 info_comb <- merge(info, info2, by.x = "id_tma", by.y = "ID") #131 patients B-12 was in the first info file
 info_comb <- merge(info_comb, info3, by.x ="id_tma", by.y = "id_sample") #131 patients - B-12, t4, T45 was already gone from the first file
 
@@ -66,8 +65,6 @@ info_comb <- info_comb %>%
 info_comb$Follow_up_months <- pmin(info_comb$Follow_up_months, 61)
 
 #optional
-
-
 replacement_vector <- c("high" = "High/Moderate", "moderate" = "High/Moderate",
                         "low" = "Low/Negative", "negative" ="Low/Negative")
 info_comb$t32_level <- replacement_vector[info_comb$t32_level]
