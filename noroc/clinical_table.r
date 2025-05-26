@@ -1,6 +1,6 @@
-#######################
-## Loading libraries ##
-######################
+#####################
+# Loading libraries #
+#####################
 
 library(data.table)
 library(tidyverse)
@@ -10,7 +10,7 @@ library(pagedown)
 library(readxl)
 library(haven)
 ####################
-##Load input files##
+# Load input files #
 ####################
 #Combine the forth clinical file 
 info <- read_sav("NOROC TMA_patient data (2).sav")
@@ -345,7 +345,7 @@ label(info_comb$NuclearPolymorphism) <- "Nuclear Polymorphism"
 label(info_comb$myc_value)         <- "MYC level"
 
 fwrite(info_comb, "testing_rmd_file.csv", row.names = T)
-table <- t1flex(table1(~ Gender+
+table <- table1(~ Gender+
                   Age_at_diagnose+
                   Staging_101022+
                   pT_cT+
@@ -363,29 +363,14 @@ table <- t1flex(table1(~ Gender+
                 extra.col = list(`p-value` = pvalue), caption = caption,
                 footnote = footnote, extra.col.pos = 3,
                 render = rndr, render.categorical = "FREQ (PCTnoNA%)",
-                topclass = " Rtable1-times "))
+                topclass = " Rtable1-times ")
 
 print(table)
 
-# Define section properties with standard page size
-sect_properties <- officer::prop_section(
-  page_size = officer::page_size(
-    orient = "portrait",
-    width = 8.5, height = 11), # Standard Letter size
-  type = "continuous")
-# Create a flextable and adjust its properties
-table_df <- as.data.frame(table)
-my_table <- flextable::flextable(table_df)
-my_table <- flextable::fontsize(my_table, size = 8) 
-my_table <- flextable::padding(my_table, padding.top = 0, padding.bottom = 0)
-my_table <- flextable::set_table_properties(my_table, width = 1, layout = "autofit")
-# Save the table as a Word document
-my_table %>% 
-  save_as_docx(path = "test.docx", pr_section = sect_properties)
-?save_as_docx
 #########################
 ##Write the output file##
 #########################
+#https://github.com/benjaminrich/table1/issues/33                                                    
 write_table1 <- function(x,                   # a table1 object
                          file,                # path to output .pdf file
                          landscape = FALSE,   # landscape print?
