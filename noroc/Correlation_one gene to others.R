@@ -21,7 +21,7 @@ rownames(expr) <- expr[,1]
 expr$`Gene names` <- NULL
 expr <- as.data.frame(t(expr))
 
-#Find the correalatioNULL#Find the correalation between trims
+#Find the correalation between trims
 T32 <- t(cor(expr$TRIM32,expr))
 T32 <- as.data.frame(T32)
 
