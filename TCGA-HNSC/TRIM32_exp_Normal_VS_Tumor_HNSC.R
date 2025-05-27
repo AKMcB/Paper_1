@@ -47,7 +47,7 @@ p <- ggplot(merge, aes(x = sample_type, y = ENSG00000119401, fill = sample_type)
   theme(legend.position = "none",
         plot.title = element_text(hjust = 0.5, face ="bold"), 
         axis.text.x = element_text(size=10), axis.ticks.x=element_blank(), 
-        axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 11, face ="italic"),#Italic if it is a gene. 
+        axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 11, face ="italic"),
         axis.text.y = element_text(size = 10), 
         panel.background = element_rect(fill = "white",
                                         colour = "white"),
@@ -57,10 +57,6 @@ p <- ggplot(merge, aes(x = sample_type, y = ENSG00000119401, fill = sample_type)
   geom_signif(comparisons = my_comparisons,map_signif_level = T, textsize=5)
 p
 
-
-reso <- 200
-length <- 3.25*reso/72
-
 png("../expression/TRIM32_expr_normal_vs_tumor.png", res = 200 ,height = 1500, width = 1500)
 print(p)
 dev.off()
@@ -68,11 +64,3 @@ dev.off()
 pdf("../expression/TRIM32_expr_normal_vs_tumor.pdf", height = 500/72, width = 500/72)
 print(p)
 dev.off()
-
-
-# Save the plot as PNG
-ggsave("../expression/TRIM32_expr_normal_vs_tumor.png", plot = p, width = 5, height = 6, units = "in", dpi = 300)
-
-# Save the plot as PDF
-ggsave("../expression/TRIM32_expr_normal_vs_tumor.pdf", plot = p, width = 5, height = 6, units = "in")
-
