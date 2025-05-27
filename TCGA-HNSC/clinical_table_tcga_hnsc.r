@@ -126,10 +126,7 @@ merged$Subtype<- factor(merged$Subtype,
 #############################
 # Define the check_normality function
 check_normality <- function(data) {
-  # Step 2: Identify numerical columns
   numerical_columns <- sapply(data, is.numeric)
-  
-  # Step 3: Perform Shapiro-Wilk test on each numerical column
   normality_results <- lapply(names(data)[numerical_columns], function(col_name) {
     col <- data[[col_name]]
     shapiro_test <- shapiro.test(col)
@@ -137,55 +134,37 @@ check_normality <- function(data) {
       Column = col_name,
       W = shapiro_test$statistic,
       p_value = shapiro_test$p.value,
-      Normal = shapiro_test$p.value > 0.05
-    ))
-  })
-  
-  # Step 4: Identify normally distributed columns
+      Normal = shapiro_test$p.value > 0.05))})
   vars_normal <- names(data)[numerical_columns][sapply(normality_results, function(result) result$Normal)]
-  return(vars_normal)
-}
+  return(vars_normal)}
 
-# Run the normality test to determine normally distributed columns
 vars_normal <- check_normality(merged)
 
-# Define the rndr function based on normally distributed columns
 rndr <- function(x, name, ...) {
   cont <- ifelse(name %in% vars_normal, "Mean (SD)", "Median (Min, Max)")
-  render.default(x, name, render.continuous = c("", cont), ...)
-}
+  render.default(x, name, render.continuous = c("", cont), ...)}
 
 pvalue <- function(x, ...) {
-  x <- x[-length(x)] # Remove "overall" group
-  # Construct vectors of data y, and groups (strata) g
+  x <- x[-length(x)] 
   y <- unlist(x)
-  g <- factor(rep(1:length(x), times=sapply(x, length))) # nolint
+  g <- factor(rep(1:length(x), times=sapply(x, length))) 
   if (is.numeric(y)) {
-# check for normality using Shapiro-Wilk test and variance equality using var.test
+# Shapiro-Wilk for normality and test variance
     swtest <- shapiro.test(y)$p.value
     vartest <- var.test(y ~ g)$p.value
     if (all(swtest > 0.05, vartest > 0.05)) {
-# If both p-values are >0.05 we assume normality and use t.test with equal variances
       p <- t.test(y ~ g, var.equal=TRUE)$p.value
       symbol <- "T-Equal"
     } else {
-# Otherwise, we assume normality with unequal variances and use t.test with var.equal=F
       p <- t.test(y ~ g, var.equal=FALSE)$p.value
-      symbol <- "T-Unequal"
-    } 
+      symbol <- "T-Unequal"} 
     if (all(swtest <= 0.05)) {
-      # Otherwise, reject normality and use Wilcoxon test
       p <- wilcox.test(y ~ g, exact=FALSE)$p.value
-      symbol <- "Wil"
-    }} 
+      symbol <- "Wil"}} 
   if (is.factor(y)) {
-# For categorical variables, perform a chi-squared test of independence
     p <- tryCatch({
-# Si warning chi-test, rC)aliser un Fisher
       chisq.test(table(y, g))$p.value
     }, warning = function(w) {
-# If a warning appears (due to expected cell counts <5 or too few observations), use Fisher's Exact test
-# If there is a warning message, print it and change the condition
       print(paste("Warning message:", w))
       return(NULL)
     })
@@ -198,8 +177,6 @@ pvalue <- function(x, ...) {
       symbol <- "Fish"
     }
   }
-# Format the p-value, using an HTML entity for the less-than sign.
-# The initial empty string places the output on the line below the variable label.
  c(paste0(sub("<", "&lt;", format.pval(p, digits=3, eps=0.001)), "<sup>", symbol, "</sup>"))
 }
 
@@ -238,43 +215,34 @@ table <- table1(~ Sex+
 
 print(table)
 
-#Make lookup table for the p-value function
+#p-value function
 symbols <- c("****", "***", "**", "*", "ns")
 cutoffs <- c(0.0001, 0.001, 0.01, 0.05)
 lookup_table <- setNames(symbols, cutoffs)
 
 #Change the p-value function so that the symbol are not included
 pvalue <- function(x, ...) {
-  x <- x[-length(x)] # Remove "overall" group
-  # Construct vectors of data y, and groups (strata) g
+  x <- x[-length(x)] 
   y <- unlist(x)
   g <- factor(rep(1:length(x), times=sapply(x, length)))
   if (is.numeric(y)) {
-    # check for normality using Shapiro-Wilk test and variance equality using var.test
     swtest <- shapiro.test(y)$p.value
     vartest <- var.test(y ~ g)$p.value
     if (all(swtest > 0.05, vartest > 0.05)) {
-      # If both p-values are >0.05 we assume normality and use t.test with equal variances
       p <- t.test(y ~ g, var.equal=TRUE)$p.value
       symbol <- lookup_table[findInterval(p, cutoffs)+1]
     } else {
-      # Otherwise, we assume normality with unequal variances and use t.test with var.equal=F
       p <- t.test(y ~ g, var.equal=FALSE)$p.value
       symbol <- lookup_table[findInterval(p, cutoffs)+1]
     } 
     if (all(swtest <= 0.05)) {
-      # Otherwise, reject normality and use Wilcoxon test
       p <- wilcox.test(y ~ g, exact=FALSE)$p.value
       symbol <- lookup_table[findInterval(p, cutoffs)+1]
     }} 
   if (is.factor(y)) {
-    # For categorical variables, perform a chi-squared test of independence
     p <- tryCatch({
-      # Si warning chi-test, rC)aliser un Fisher
       chisq.test(table(y, g))$p.value
     }, warning = function(w) {
-      # If a warning appears (due to expected cell counts <5 or too few observations), use Fisher's Exact test
-      # If there is a warning message, print it and change the condition
       print(paste("Warning message:", w))
       return(NULL)
     })
@@ -287,8 +255,6 @@ pvalue <- function(x, ...) {
       symbol <- lookup_table[findInterval(p, cutoffs)+1]
     }
   } 
-  # Format the p-value, using an HTML entity for the less-than sign.
-  # The initial empty string places the output on the line below the variable label.
   c(paste0(sub("<", "&lt;", format.pval(p, digits=3, eps=0.001)), "<sup>", symbol, "</sup>"))
 }
 
