@@ -166,19 +166,15 @@ pvalue <- function(x, ...) {
       chisq.test(table(y, g))$p.value
     }, warning = function(w) {
       print(paste("Warning message:", w))
-      return(NULL)
-    })
+      return(NULL)})
     if (!is.null(p)) {
       p <- chisq.test(table(y, g))$p.value
       symbol <- "Chi"
     } else
     {
       p <- fisher.test(table(y, g), simulate.p.value=TRUE)$p.value
-      symbol <- "Fish"
-    }
-  }
- c(paste0(sub("<", "&lt;", format.pval(p, digits=3, eps=0.001)), "<sup>", symbol, "</sup>"))
-}
+      symbol <- "Fish"}}
+ c(paste0(sub("<", "&lt;", format.pval(p, digits=3, eps=0.001)), "<sup>", symbol, "</sup>"))}
 
 caption <- c("Table 1: Association of clinical parameters 
 between TRIM32 expression groups")
@@ -237,8 +233,7 @@ pvalue <- function(x, ...) {
     } 
     if (all(swtest <= 0.05)) {
       p <- wilcox.test(y ~ g, exact=FALSE)$p.value
-      symbol <- lookup_table[findInterval(p, cutoffs)+1]
-    }} 
+      symbol <- lookup_table[findInterval(p, cutoffs)+1] }} 
   if (is.factor(y)) {
     p <- tryCatch({
       chisq.test(table(y, g))$p.value
@@ -248,15 +243,12 @@ pvalue <- function(x, ...) {
     })
     if (!is.null(p)) {
       p <- chisq.test(table(y, g))$p.value
-      symbol <- lookup_table[findInterval(p, cutoffs)+1]
-    } else 
+      symbol <- lookup_table[findInterval(p, cutoffs)+1]} 
+    else 
     {
       p <- fisher.test(table(y, g), simulate.p.value=TRUE)$p.value
-      symbol <- lookup_table[findInterval(p, cutoffs)+1]
-    }
-  } 
-  c(paste0(sub("<", "&lt;", format.pval(p, digits=3, eps=0.001)), "<sup>", symbol, "</sup>"))
-}
+      symbol <- lookup_table[findInterval(p, cutoffs)+1]}} 
+  c(paste0(sub("<", "&lt;", format.pval(p, digits=3, eps=0.001)), "<sup>", symbol, "</sup>"))}
 
 label(merged$`Diagnosis Age`)    <- "Age"
 label(merged$site_of_resection_or_biopsy) <- "Tumor Site"
@@ -300,7 +292,7 @@ write_table1 <- function(x,                   # a table1 object
                          scale = 0.5,           # scaling factor
                          width = 8.5,         # width of resulting pdf (in.)
                          height = 11,         # height of resulting pdf (in.)
-                         dump_html = TRUE) {  # delete intermediate html files?
+                         dump_html = TRUE) {  
   
   x <- htmltools::HTML(x)
   src <- system.file(package = "table1", "table1_defaults_1.0")
@@ -318,7 +310,6 @@ write_table1 <- function(x,                   # a table1 object
                                         scale = scale,
                                         paperWidth = width,
                                         paperHeight = height))
-  if(dump_html) unlink(gsub(".pdf", ".html", file))
-}
+  if(dump_html) unlink(gsub(".pdf", ".html", file))}
 
 write_table1(table, "2025_03_19_clinical_table_hnsc_trim32_high_vs_low_v3.pdf")
