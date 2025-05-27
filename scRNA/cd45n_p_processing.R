@@ -26,7 +26,7 @@ merged_seurat <- JoinLayers(merged_seurat)
 # Subset based on either "CD45p" or "CD45n"
 subset_seurat <- merged_seurat[, grepl("CD45n", merged_seurat@meta.data$orig.ident)]
 
-# Create a new column with only sample ID
+# Create a new column 
 subset_seurat@meta.data$sample_ID <- sub("_.*", "", subset_seurat@meta.data$sample)
 subset_seurat@meta.data$sample_ID
 
@@ -46,7 +46,7 @@ combined <- FindVariableFeatures(combined, selection.method = "vst", nfeatures =
 # Identify the 10 most highly variable genes
 top10 <- head(VariableFeatures(combined), 10)
 
-# plot variable features with and without labels
+# plot variable features
 plot1 <- VariableFeaturePlot(combined)
 plot2 <- LabelPoints(plot = plot1, points = top10, repel = TRUE)
 plot1 + plot2
@@ -102,13 +102,13 @@ dev.off()
 save(combined,file= "all_samples_cd45n_norm_scaled_clustered_batch_corr.RData")
 #load("all_samples_cd45n_norm_scaled_clustered.RData")
 
-# 1. Identify the sample you want to highlight
+# Identify the sample
 highlight_sample <- "HN17"  # Replace this with your sample ID
 
-# 2. Create a new column in metadata that labels the target sample
+# Create a new column in metadata
 combined$highlight <- ifelse(combined$sample_ID == highlight_sample, highlight_sample, "Other")
 
-# 3. Plot using DimPlot, coloring by the new 'highlight' column
+# Plot using DimPlot
 DimPlot(combined, group.by = "highlight", cols = c("red", "grey")) + 
   ggtitle(paste("Highlighting", highlight_sample))
 
@@ -183,18 +183,17 @@ subset_cell <- subset(combined, sample_ID == highlight_sample)
 DimPlot(subset_cell, group.by = "cell_type_singler_HPCA_sub") +
   ggtitle(paste("Cell Annotations for", highlight_sample))
 
-celltype_counts <- table(subset_cell$cell_type_singler_HPCA_sub)  # Replace 'celltype' with your annotation column
+celltype_counts <- table(subset_cell$cell_type_singler_HPCA_sub) 
 
-# 3. Convert the table to a data frame for easier plotting
+# Convert the table to a data frame 
 celltype_df <- as.data.frame(celltype_counts)
 colnames(celltype_df) <- c("CellType", "Count")
 
-# 4. Create a bar plot
+# bar plot
 ggplot(celltype_df, aes(x = CellType, y = Count, fill = CellType)) +
   geom_bar(stat = "identity") +
   ggtitle(paste("Cell Type Distribution for", highlight_sample)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels if needed
-
 
 library("SCpubr")
 
@@ -202,7 +201,6 @@ barplot <- do_BarPlot(combined,
            group.by = "sample_ID",
            split.by = "cell_type_singler_HPCA_sub",
            position = "fill")
-
 
 pdf("batch_corr_hpca_ann_barplot_cd45n_all_samples.pdf", height = 8, width = 8)
 print(barplot)
