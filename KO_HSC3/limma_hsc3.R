@@ -183,14 +183,11 @@ asp <- 3 # aspect ratio of bubble plot
 charcut <- 100 # cut signature name in heatmap to this nr of characters
 
 # Make signature names more readable
-a <- as.character(dat$pathway) # 'a' is a great variable name to substitute row names with something more readable
+a <- as.character(dat$pathway)
 for (j in 1:length(a)){
-  a[j] <- substr(a[j], signnamelength+2, nchar(a[j]))
-}
-#a <- tolower(a) # convert to lower case (you may want to comment this out, it really depends on what signatures you are looking at, c6 signatures contain gene names, and converting those to lower case may be confusing)
+  a[j] <- substr(a[j], signnamelength+2, nchar(a[j]))}
 for (j in 1:length(a)){
-  if(nchar(a[j])>charcut) { a[j] <- paste(substr(a[j], 1, charcut), "...", sep=" ")}
-} # cut signature names that have more characters than charcut, and add "..."
+  if(nchar(a[j])>charcut) { a[j] <- paste(substr(a[j], 1, charcut), "...", sep=" ")}} 
 a <- gsub("_", " ", a)
 dat$NAME <- a
 
@@ -220,7 +217,7 @@ signcol <- rev(signcol) # need to revert vector of colors,
 # Plot bubble plot
 g<-ggplot(dat2, aes(x=padj,y=signature,size=size))+
   geom_point(aes(fill=NES), shape=21)+
-  theme_bw()+ # white background, needs to be placed before the "signcol" line
+  theme_bw()+ 
   xlim(0, fdrcut)+
   scale_size_area(max_size=10,guide="legend")+
   scale_fill_gradient2(low=dencol_neg, high=dencol_pos) + 
@@ -228,7 +225,7 @@ g<-ggplot(dat2, aes(x=padj,y=signature,size=size))+
   ggtitle("Hallmark: KO vs WT TRIM32")+ 
   theme(axis.text.y = element_text(colour=signcol),
         plot.title = element_text(hjust = 0.5, face ="bold"))+
-  theme(aspect.ratio=asp, axis.title.y=element_blank()) # test aspect.ratio
+  theme(aspect.ratio=asp, axis.title.y=element_blank()) 
 
 g
 
