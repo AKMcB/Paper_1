@@ -97,17 +97,13 @@ dev.off()
 
 dput(names(df))
 dput(names(cor_matrix))
-# Choose two samples to compare others to, e.g., Sample1 and Sample2
-# Assuming your sample_info dataframe has a column named condition
-# Split sample names based on condition
+
 treated_samples <- colnames(cor_matrix)[meta$treatment == "KO"]
 control_samples <- colnames(cor_matrix)[meta$treatment == "WT"]
 
-# Calculate average correlation of all samples within each group to each individual sample
 average_cor_treated <- rowMeans(cor_matrix[, treated_samples])
 average_cor_control <- rowMeans(cor_matrix[, control_samples])
 
-# Create a dataframe for plotting
 plot_data <- data.frame(
   Average_Correlation_Treated = average_cor_treated,
   Average_Correlation_Control = average_cor_control
