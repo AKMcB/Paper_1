@@ -244,7 +244,6 @@ ht <- Heatmap(h,col = col_fun,
 #Print the heatmap as a pdf in your local drive. Use padding to make it look better (in my opinion)
 draw(ht, merge_legend=TRUE, padding = unit(c(2, 2, 2, 2), "mm"))
 
-#You have to run dev.off() before checking the pdf in your local drive
 dev.off()
 
 #To find the gene and patient orders, draw the heatmap object first so that it will not change with every run
