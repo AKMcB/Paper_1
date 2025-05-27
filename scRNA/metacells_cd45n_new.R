@@ -72,7 +72,7 @@ combined <- MetacellsByGroups(
 # Processing for the meta-cell seurat object #
 ##############################################
 
-# extract the metacell seurat object 
+# extract the metacell object 
 combined_metacell <- GetMetacellObject(combined)
 
 #normalize
@@ -111,7 +111,6 @@ combined_metacell <- combined_metacell %>%
   FindClusters(resolution = 0.5)
 
 combined_metacell <- RunUMAP(combined_metacell, reduction = "harmony", dims = 1:20, seed.use = 1234)
-?RunUMAP
 Idents(combined_metacell)<- combined_metacell$pan_cancer_cluster
 
 p1<- DimPlot(combined, reduction = "umap", label = FALSE, 
