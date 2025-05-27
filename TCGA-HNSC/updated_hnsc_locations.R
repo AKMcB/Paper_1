@@ -21,9 +21,6 @@ ann <- ann[-c(528,529),]
 
 expr <- expr[expr$id %in% ann$case_submitter_id, ]
 ann <- ann[ann$case_submitter_id %in% expr$id,]
-
-
-# Use table() to count occurrences of each unique string in the column
 string_counts <- table(ann$site_of_resection_or_biopsy)
 
 # Print the counts
@@ -31,83 +28,61 @@ print(string_counts)
 
 patterns_pahrynx <- c("Oropharynx, NOS","Posterior wall of oropharynx",
                       "Hypopharynx, NOS", "Tonsil, NOS", "Base of tongue, NOS")
-
-# Define the patterns you want to replace as a regular expression
-
 pattern_regex <- paste(patterns_pahrynx, collapse = "|")
 
-# Define the replacement string
+# Define replacement 
 replacement <- "Pharynx, NOS"
 
-
-# Use gsub() to replace multiple patterns with the replacement string
+# Use gsub() 
 ann$site_of_resection_or_biopsy <- gsub(pattern_regex, replacement, ann$site_of_resection_or_biopsy)
 string_counts <- table(ann$site_of_resection_or_biopsy)
 print(string_counts)
 
 patterns_tongue <- c("Ventral surface of tongue, NOS","Border of tongue")
-
-# Define the patterns you want to replace as a regular expression
-
 pattern_regex <- paste(patterns_tongue, collapse = "|")
 
-# Define the replacement string
+# Define replacement 
 replacement <- "Tongue, NOS"
 
-
-# Use gsub() to replace multiple patterns with the replacement string
+# Use gsub() 
 ann$site_of_resection_or_biopsy <- gsub(pattern_regex, replacement, ann$site_of_resection_or_biopsy)
 string_counts <- table(ann$site_of_resection_or_biopsy)
 print(string_counts)
 
 patterns_gum <- c("Lower gum","Upper gum", "Hard palate", "Palate, NOS")
-
-# Define the patterns you want to replace as a regular expression
-
 pattern_regex <- paste(patterns_gum, collapse = "|")
 
-# Define the replacement string
+# Define replacement 
 replacement <- "Gum, NOS"
 
-
-# Use gsub() to replace multiple patterns with the replacement string
+# Use gsub()
 ann$site_of_resection_or_biopsy <- gsub(pattern_regex, replacement, ann$site_of_resection_or_biopsy)
 string_counts <- table(ann$site_of_resection_or_biopsy)
 print(string_counts)
 
 patterns_floor <- c("Anterior floor of mouth")
-
-# Define the patterns you want to replace as a regular expression
-
 pattern_regex <- paste(patterns_floor, collapse = "|")
 
-# Define the replacement string
+#replacement
 replacement <- "Floor of mouth, NOS"
 
-
-# Use gsub() to replace multiple patterns with the replacement string
+# Use gsub()
 ann$site_of_resection_or_biopsy <- gsub(pattern_regex, replacement, ann$site_of_resection_or_biopsy)
 string_counts <- table(ann$site_of_resection_or_biopsy)
 print(string_counts)
 
 patterns_lar <- c("Supraglottis")
-
-# Define the patterns you want to replace as a regular expression
-
 pattern_regex <- paste(patterns_lar, collapse = "|")
 
-# Define the replacement string
+# Define replacement
 replacement <- "Larynx, NOS"
 
-
-# Use gsub() to replace multiple patterns with the replacement string
 ann$site_of_resection_or_biopsy <- gsub(pattern_regex, replacement, ann$site_of_resection_or_biopsy)
 string_counts <- table(ann$site_of_resection_or_biopsy)
 print(string_counts)
 
 #Remove lip since that can be classified at melanoma 
 #Remove retromolar areas as this site can not be defined further 
-
 ann <- subset(ann,!ann$site_of_resection_or_biopsy %in% c("Lip, NOS", "Retromolar area"))
 unique(ann$site_of_resection_or_biopsy)
 
